@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AIESEC • Cadastro de Membro</title>
+  <meta name="color-scheme" content="light" />
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <link rel="icon" href="./assets/img/Logo-Aiesec.png">
+</head>
+<body>
+<header>
+    <div class="brand" aria-label="AIESEC">
+        <span class="brand__badge" aria-hidden="true">
+            <img src="./assets/img/Aiesec.png" alt="Aiesec">
+        </span>
+        <span></span>
+    </div>
+</header>
+
+  <main>
+    <section class="card" aria-labelledby="titulo">
+      <div class="card__head">
+        <h1 id="titulo" class="card__title">Formulário de Cadastro para e-mail institucional</h1>
+        <p class="card__subtitle">Preencha para gerar um e-mail institucional</p>
+      </div>
+
+      <form action="#" method="post" novalidate>
+        <fieldset class="grid grid--2">
+          <!-- Nome -->
+          <div>
+            <label for="nome" class="required">Nome</label>
+            <input id="nome" name="nome" type="text" placeholder="Ex.: Ana" autocomplete="given-name" required />
+          </div>
+
+          <!-- Sobrenome -->
+          <div>
+            <label for="sobrenome" class="required">Sobrenome</label>
+            <input id="sobrenome" name="sobrenome" type="text" placeholder="Ex.: Santos" autocomplete="family-name" required />
+          </div>
+
+          <!-- Comitê (Select) -->
+          <div>
+            <label for="comite" class="required">Comitê</label>
+            <select id="comite" name="comite" required>
+              <option value="" disabled selected>Selecione seu comitê</option>
+              <option>Recife</option>
+              <option>São Paulo</option>
+              <option>Rio de Janeiro</option>
+              <option>Belo Horizonte</option>
+              <option>Curitiba</option>
+              <option>Salvador</option>
+              <option>Porto Alegre</option>
+              <option>Fortaleza</option>
+              <option>Campinas</option>
+              <option>Brasília</option>
+            </select>
+            <p class="helper">Escolha o comitê local ao qual você está vinculado.</p>
+          </div>
+
+          <!-- Cargo (Select) -->
+          <div>
+            <label for="cargo" class="required">Cargo</label>
+            <select id="cargo" name="cargo" required>
+              <option value="" disabled selected>Selecione seu cargo</option>
+              <option>Membro</option>
+              <option>Vice-Presidente (LCVP)</option>
+              <option>Presidente (LCP)</option>
+              <option>Team Leader/Maneger</option>
+            </select>
+          </div>
+
+          <!---Área-->
+          <div>
+            <label for="area" class="required">Área</label>
+            <select id="area" name="area" required>
+              <option value="" disabled selected>Selecione sua Área</option>
+              <option>B2B</option>
+              <option>B2C</option>
+              <option>F&L</option>
+              <option>PM</option>
+              <option>OGV</option>
+              <option>IGV</option>
+              <option>OGT</option>
+              <option>IGT</option>
+            </select>
+          </div>
+
+          <!-- Código de Membro -->
+          <div>
+            <label for="codigo" class="required">Código de Membro</label>
+            <input id="codigo" name="codigo" type="text" placeholder="Ex.: 111111" inputmode="latin" pattern="[0-9]{4,20}" required />
+            <p class="helper">Use números . Mín. 4, máx. 20 caracteres.</p>
+          </div>
+        </fieldset>
+
+        <div class="actions" role="group" aria-label="Ações do formulário">
+          <button class="btn btn--primary" type="submit">Enviar cadastro</button>
+          <button class="btn btn--ghost" type="reset">Limpar</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy AIESEC — 2025.</p>
+  </footer>
+  <script src="./assets/js/script.js"></script>
+</body>
+</html>
