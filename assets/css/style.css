@@ -78,6 +78,16 @@ input:focus, select:focus{
   box-shadow:0 0 0 4px var(--ring);
 }
 
+input.codigo-valid {
+  border-color: green;
+  box-shadow: 0 0 5px 2px rgba(0, 255, 0, 0.4); /* sombra verde */
+}
+
+input.codigo-invalid {
+  border-color: red;
+  box-shadow: 0 0 5px 2px rgba(255, 0, 0, 0.4); /* sombra vermelha */
+}
+
 .actions{ display:flex; gap:12px; flex-wrap:wrap; margin-top:8px; }
 .btn{
   display:inline-flex; align-items:center; justify-content:center; gap:8px;

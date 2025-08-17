@@ -89,8 +89,9 @@
           <!-- Código de Membro -->
           <div>
             <label for="codigo" class="required">Código de Membro</label>
-            <input id="codigo" name="codigo" type="text" placeholder="Ex.: 111111" inputmode="latin" pattern="[0-9]{4,20}" required />
-            <p class="helper">Use números . Mín. 4, máx. 20 caracteres.</p>
+            <input id="codigo" name="codigo" type="text" classe="codigo" 
+            placeholder="Ex.: 111111" inputmode="numeric" required />
+            <p class="helper" id="erro_codigo"></p>
           </div>
         </fieldset>
 
