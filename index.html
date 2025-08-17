@@ -31,12 +31,14 @@
           <div>
             <label for="nome" class="required">Nome</label>
             <input id="nome" name="nome" type="text" placeholder="Ex.: Ana" autocomplete="given-name" required />
+            <p class="helper" id="erro_nome"></p>
           </div>
 
           <!-- Sobrenome -->
           <div>
             <label for="sobrenome" class="required">Sobrenome</label>
             <input id="sobrenome" name="sobrenome" type="text" placeholder="Ex.: Santos" autocomplete="family-name" required />
+            <p class="helper" id="erro_sobrenome"></p>
           </div>
 
           <!-- Comitê (Select) -->
@@ -44,18 +46,8 @@
             <label for="comite" class="required">Comitê</label>
             <select id="comite" name="comite" required>
               <option value="" disabled selected>Selecione seu comitê</option>
-              <option>Recife</option>
-              <option>São Paulo</option>
-              <option>Rio de Janeiro</option>
-              <option>Belo Horizonte</option>
-              <option>Curitiba</option>
-              <option>Salvador</option>
-              <option>Porto Alegre</option>
-              <option>Fortaleza</option>
-              <option>Campinas</option>
-              <option>Brasília</option>
             </select>
-            <p class="helper">Escolha o comitê local ao qual você está vinculado.</p>
+            <p class="helper" id="erro_comite">Escolha o comitê local ao qual você está vinculado.</p>
           </div>
 
           <!-- Cargo (Select) -->
@@ -63,11 +55,8 @@
             <label for="cargo" class="required">Cargo</label>
             <select id="cargo" name="cargo" required>
               <option value="" disabled selected>Selecione seu cargo</option>
-              <option>Membro</option>
-              <option>Vice-Presidente (LCVP)</option>
-              <option>Presidente (LCP)</option>
-              <option>Team Leader/Maneger</option>
             </select>
+          <p class="helper" id="erro_cargo"></p>
           </div>
 
           <!---Área-->
@@ -75,15 +64,8 @@
             <label for="area" class="required">Área</label>
             <select id="area" name="area" required>
               <option value="" disabled selected>Selecione sua Área</option>
-              <option>B2B</option>
-              <option>B2C</option>
-              <option>F&L</option>
-              <option>PM</option>
-              <option>OGV</option>
-              <option>IGV</option>
-              <option>OGT</option>
-              <option>IGT</option>
             </select>
+            <p class="helper" id="erro_area"></p>
           </div>
 
           <!-- Código de Membro -->
