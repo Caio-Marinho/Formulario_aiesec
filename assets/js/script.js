@@ -1,12 +1,12 @@
 // Seleciona o formulário
-const form = document.querySelector('form');
+const form = document.querySelector('#email');
 
 form.addEventListener('submit', function(event) {
   event.preventDefault(); // Evita envio padrão
 
   // Pega os valores dos inputs e selects
-  const nome = document.getElementById('nome').value.toLowerCase();
-  const sobrenome = document.getElementById('sobrenome').value.toLowerCase();
+  const nome = document.getElementById('nome').value.toLowerCase().trim();
+  const sobrenome = document.getElementById('sobrenome').value.toLowerCase().trim();
   const comite = document.getElementById('comite').value;
   const cargo = document.getElementById('cargo').value;
   const area = document.getElementById('area').value;
