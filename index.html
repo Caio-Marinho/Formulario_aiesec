@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AIESEC • Cadastro de Membro</title>
   <meta name="color-scheme" content="light" />
+  <!-- Option 1: Include in HTML -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
   <link rel="stylesheet" href="./assets/css/style.css">
   <link rel="icon" href="./assets/img/Logo-Aiesec.png">
 </head>
@@ -41,7 +43,19 @@
             <p class="helper" id="erro_sobrenome"></p>
           </div>
 
-          <!-- Comitê (Select) -->
+          <!-- Senha -->
+          <div class="campo-senha">
+            <label for="senha" class="required">Senha</label>
+            <input id="senha" name="senha" type="password" required />
+            <i class="bi bi-eye-slash-fill" id="esconderSenha"></i>
+            <i class="bi bi-eye-fill" id="mostrarSenha"></i>
+            <p class="helper" id="erro_senha1"></p>
+            <p class="helper" id="erro_senha2"></p>
+            <p class="helper" id="erro_senha3"></p>
+            <p class="helper" id="erro_senha4"></p>
+            <p class="helper" id="erro_senha5"></p>
+          </div>
+          <!---Comitê (Select)(ver possibilidade de implementar no futuro)
           <div>
             <label for="comite" class="required">Comitê</label>
             <select id="comite" name="comite" required>
@@ -49,8 +63,8 @@
             </select>
             <p class="helper" id="erro_comite">Escolha o comitê local ao qual você está vinculado.</p>
           </div>
-
-          <!-- Cargo (Select) -->
+          
+          Cargo (Select) 
           <div>
             <label for="cargo" class="required">Cargo</label>
             <select id="cargo" name="cargo" required>
@@ -59,7 +73,7 @@
           <p class="helper" id="erro_cargo"></p>
           </div>
 
-          <!---Área-->
+          Área
           <div>
             <label for="area" class="required">Área</label>
             <select id="area" name="area" required>
@@ -68,19 +82,19 @@
             <p class="helper" id="erro_area"></p>
           </div>
 
-          <!-- Código de Membro -->
+          Código de Membro
           <div>
             <label for="codigo" class="required">Código de Membro</label>
             <input id="codigo" name="codigo" type="text" classe="codigo" 
             placeholder="Ex.: 111111" inputmode="numeric" required />
             <p class="helper" id="erro_codigo"></p>
-          </div>
+          </div>-->
         </fieldset>
 
         <div class="actions" role="group" aria-label="Ações do formulário">
           <button class="btn btn--primary" type="submit">Enviar cadastro</button>
           <button class="btn btn--ghost" type="reset">Limpar</button>
-        </div>
+        </div> 
       </form>
     </section>
   </main>
