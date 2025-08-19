@@ -64,7 +64,7 @@ const emailsValidos = [
   document.querySelector('#erro_email_sec1'),
   document.querySelector('#erro_email_sec2'),
   document.querySelector('#erro_email_sec3'),
-  document.querySelector('#erro_email_sec4') 
+  document.querySelector('#erro_email_sec4')
 ];
 
 /**
@@ -172,7 +172,7 @@ form.addEventListener("reset", () => {
  * - Reseta o formulário após envio.
  */
 form.addEventListener('submit', async function (event) {
-  event.preventDefault(); 
+  event.preventDefault();
   mostrarSpinner();
 
   // Validação dos campos obrigatórios
@@ -193,6 +193,22 @@ form.addEventListener('submit', async function (event) {
   await new Promise(resolve => setTimeout(resolve, 2000));
   esconderSpinner();
 
+  console.log("Nome:", nome.value);
+  console.log("Sobrenome:", sobrenome.value);
+  console.log("Email:", emailSecundario.value);
+  console.log("Senha:", senha.value);
+
+   if (fotoInput) {
+    const file = fotoInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const base64 = e.target.result; // Aqui está a imagem em Base64
+      console.log("Imagem Base64:", base64);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    console.log("Nenhuma imagem selecionada");
+  }
   alert(`O e-mail ${gerarEmail(inputNome, inputSobrenome)}, pertencente a ${inputNome} ${inputSobrenome} foi gerado com sucesso.`);
 
   form.reset();
