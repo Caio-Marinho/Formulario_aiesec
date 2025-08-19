@@ -248,9 +248,7 @@ input.invalid {
 .campoEmailSecundario label {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  /* Espaço entre a label e o ícone */
-  font-weight: 500;
+  
 }
 
 .campoEmailSecundario i {
