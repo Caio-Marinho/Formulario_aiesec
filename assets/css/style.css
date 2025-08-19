@@ -223,7 +223,8 @@ input.invalid {
 /* Ícones de olho */
 .campo-senha i {
   position: absolute;
-  top: 23%;
+  top: 22%;
+  bottom: auto;
   right: 10px;
   transform: translateY(-50%);
   cursor: pointer;
