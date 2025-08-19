@@ -2,24 +2,26 @@
 
 /**
  * Pausa a execução por uma quantidade específica de milissegundos.
+ * Usado em validações assíncronas ou feedback temporário.
  * @param {number} ms - Tempo em milissegundos para pausar.
- * @returns {Promise<void>} Uma promise que resolve após o tempo especificado.
+ * @returns {Promise<void>} Promise resolvida após o tempo especificado.
  */
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**
- * Cria e exibe um modal formatando a mensagem caso haja quebras (\n)
- * @param {string} titulo - Título do modal.
- * @param {string} mensagem - Mensagem do corpo do modal.
+ * Cria e exibe um modal dinâmico.
+ * Divide o texto em parágrafos com base nas quebras de linha (\n).
+ * @param {string} titulo - Título exibido no cabeçalho do modal.
+ * @param {string} mensagem - Corpo da mensagem, aceita "\n" como quebra.
  */
 function criarModal(titulo, mensagem) {
-    // Overlay do modal
+    // Overlay escuro por trás do modal
     const modalOverlay = document.createElement('div');
     modalOverlay.classList.add('modal-overlay');
 
-    // Caixa principal do modal
+    // Caixa principal
     const modalBox = document.createElement('div');
     modalBox.classList.add('modal-box');
 
@@ -41,13 +43,12 @@ function criarModal(titulo, mensagem) {
     const modalBody = document.createElement('div');
     modalBody.classList.add('modal-body');
 
-    // Quebra a mensagem em parágrafos ao encontrar "\n"
+    // Divide mensagem em linhas e cria <p> para cada
     const linhas = mensagem.split('\n');
     linhas.forEach(linha => {
-        // Remove espaços extras e adiciona ponto final se não houver
         let texto = linha.trim();
         if (texto && !/[.!?]$/.test(texto)) {
-            texto += '.';
+            texto += '.'; // garante pontuação final
         }
         const p = document.createElement('p');
         p.textContent = texto;
@@ -74,17 +75,16 @@ function criarModal(titulo, mensagem) {
     document.body.appendChild(modalOverlay);
 }
 
-
 /**
  * Valida um input de texto (nome ou sobrenome).
- * Remove caracteres inválidos e verifica se o valor é válido.
- * @param {HTMLInputElement} input - Campo de input a ser validado.
- * @param {HTMLElement} erroElemento - Elemento onde a mensagem de erro será exibida.
- * @param {string} tipo - Tipo de campo, usado na mensagem de erro ('nome' ou 'sobrenome').
- * @returns {Promise<boolean>} Retorna true se válido, false caso contrário.
+ * Remove caracteres inválidos e fornece mensagens de erro dinâmicas.
+ * @param {HTMLInputElement} input - Campo de input a validar.
+ * @param {HTMLElement} erroElemento - Elemento onde mostrar mensagens.
+ * @param {string} tipo - Tipo do campo ('nome' ou 'sobrenome').
+ * @returns {Promise<boolean>} true se válido, false caso contrário.
  */
 async function validarTexto(input, erroElemento, tipo) {
-    input.value = input.value.replace(/[^A-Za-zÀ-ÿ\s]/g, ''); // Remove caracteres inválidos
+    input.value = input.value.replace(/[^A-Za-zÀ-ÿ\s]/g, ''); // limpa caracteres
     const regex = /^[A-Za-zÀ-ÿ\s]+$/;
 
     if (regex.test(input.value) && input.value !== "") {
@@ -97,7 +97,7 @@ async function validarTexto(input, erroElemento, tipo) {
         input.classList.remove('valid');
         erroElemento.textContent = `Deve ser um ${tipo} próprio`;
 
-        // Se campo vazio, restaura após 2 segundos
+        // Se vazio, restaura mensagem depois de 2s
         if (input.value === "") {
             await sleep(2000);
             input.classList.remove('invalid');
@@ -108,11 +108,15 @@ async function validarTexto(input, erroElemento, tipo) {
 }
 
 /**
- * Valida um input de senha de acordo com regras:
- * mínimo 8 caracteres, sem espaços, 1 minúscula, 1 maiúscula, 1 número e 1 caractere especial.
- * @param {HTMLInputElement} input - Campo de senha a ser validado.
- * @param {HTMLElement[]} erros - Array com elementos de mensagem de erro correspondentes às regras.
- * @returns {boolean} Retorna true se todas as regras forem atendidas.
+ * Valida a senha de acordo com critérios de segurança:
+ * - Mínimo 8 caracteres
+ * - Sem espaços
+ * - Pelo menos 1 letra minúscula
+ * - Pelo menos 1 letra maiúscula
+ * - Pelo menos 1 número e 1 caractere especial
+ * @param {HTMLInputElement} input - Campo de senha.
+ * @param {HTMLElement[]} erros - Lista de mensagens relacionadas às regras.
+ * @returns {boolean} true se todos os critérios forem atendidos.
  */
 function validarSenha(input, erros) {
     const valor = input.value;
@@ -121,7 +125,7 @@ function validarSenha(input, erros) {
     const maiusculo = /[A-Z]/.test(valor);
     const caracterEspecial = /\d/.test(valor) && /[@$!%*?&]/.test(valor);
 
-    // Atualiza cores das mensagens
+    // Atualiza mensagens com cores
     if (valor !== "") {
         erros[0].style.color = minimo ? 'green' : 'red';
         erros[1].style.color = minusculo ? 'green' : 'red';
@@ -144,7 +148,7 @@ function validarSenha(input, erros) {
 /**
  * Alterna a visibilidade de um campo de senha.
  * @param {HTMLInputElement} input - Campo de senha.
- * @param {boolean} mostrar - true para mostrar, false para ocultar.
+ * @param {boolean} mostrar - true para mostrar senha, false para ocultar.
  * @param {HTMLElement} olhoAberto - Ícone de olho aberto.
  * @param {HTMLElement} olhoFechado - Ícone de olho fechado.
  */
@@ -155,73 +159,73 @@ function toggleSenha(input, mostrar, olhoAberto, olhoFechado) {
 }
 
 /**
- * Valida se o e-mail possui um domínio permitido
- * @param {string} email - Valor do input do e-mail
- * @returns {boolean} true se válido, false se inválido
+ * Verifica se o e-mail informado pertence a domínios permitidos.
+ * @param {string} email - E-mail informado no input.
+ * @returns {boolean} true se válido, false caso contrário.
  */
 function validarEmailSecundario(email) {
-    // Lista de domínios permitidos
     const dominiosPermitidos = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com'];
-
-    // Expressão regular básica para verificar formato
     const regexEmail = /^[\w.-]+@([\w-]+\.)+[\w-]{2,4}$/;
     if (!regexEmail.test(email)) return false;
-
-    // Extrai o domínio do e-mail
     const dominio = email.split('@')[1].toLowerCase();
-
-    // Verifica se o domínio está na lista
     return dominiosPermitidos.includes(dominio);
 }
 
 /**
- * Exibe o spinner de carregamento
+ * Exibe o spinner de carregamento.
  */
 function mostrarSpinner() {
     document.getElementById('spinner').style.display = 'flex';
 }
 
 /**
- * Oculta o spinner de carregamento
+ * Oculta o spinner de carregamento.
  */
 function esconderSpinner() {
     document.getElementById('spinner').style.display = 'none';
 }
 
 /**
- * Mostra a pré-visualização da imagem selecionada no input.
- * Exibe mensagem de erro caso o arquivo não seja uma imagem.
- * @param {HTMLInputElement} fotoInput - Input do tipo "file" para foto do usuário.
- * @param {HTMLImageElement} previewFoto - Elemento <img> para exibir a pré-visualização.
- * @param {HTMLElement} erroFoto - Elemento onde a mensagem de erro será exibida.
+ * Mostra a pré-visualização da foto enviada.
+ * Aceita apenas arquivos JPG e PNG.
+ * @param {HTMLInputElement} fotoInput - Input do tipo file.
+ * @param {HTMLImageElement} previewFoto - Elemento <img> para mostrar preview.
+ * @param {HTMLElement} erroFoto - Elemento de erro para mensagens.
  */
 function previewImagem(fotoInput, previewFoto, erroFoto) {
     const file = fotoInput.files[0];
 
     if (file) {
-        // Verifica se é uma imagem
-        if (!file.type.startsWith('image/')) {
-            erroFoto.textContent = "Selecione um arquivo de imagem válido.";
-            previewFoto.style.display = 'none';
+        const formatosPermitidos = ['image/jpeg', 'image/jpg', 'image/png'];
+        if (!formatosPermitidos.includes(file.type)) {
+            erroFoto.textContent = "Apenas arquivos JPGE ,JPG ou PNG são permitidos.";
+            previewFoto.src = "./assets/img/user.png"; // volta para padrão
             return;
         }
-
         erroFoto.textContent = '';
         const reader = new FileReader();
         reader.onload = (e) => {
             previewFoto.src = e.target.result;
-            previewFoto.style.display = 'block';
         };
         reader.readAsDataURL(file);
     } else {
-        previewFoto.style.display = 'none';
+        previewFoto.src = "./assets/img/user.png"; // reseta
         erroFoto.textContent = '';
     }
 }
 
 /**
- * Gera um e-mail institucional a partir de nome e sobrenome.
- * Ex.: caio.santos@aiesec.org.br
+ * Restaura a imagem padrão do usuário.
+ * Usada no reset do formulário.
+ * @param {HTMLImageElement} preview - Elemento de preview da foto.
+ */
+function limpar(preview) {
+    preview.src = "./assets/img/user.png";
+}
+
+/**
+ * Gera e-mail institucional a partir do nome e sobrenome.
+ * Formato: nome.sobrenome@aiesec.org.br
  * @param {string} nome - Nome do usuário.
  * @param {string} sobrenome - Sobrenome do usuário.
  * @returns {string} E-mail formatado.

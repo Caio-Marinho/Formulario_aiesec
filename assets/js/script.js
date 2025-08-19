@@ -1,48 +1,62 @@
 // ------------------- Seleção do formulário e elementos ------------------- //
 
 /**
- * Seleciona o formulário principal de cadastro.
+ * Seleciona o formulário principal de cadastro de usuário.
+ * Usado para controlar eventos de validação e envio.
  * @type {HTMLFormElement}
  */
 const form = document.querySelector('#email');
 
 /**
- * Seleciona os inputs de nome e sobrenome.
+ * Seleciona os campos de entrada de nome e sobrenome do usuário.
  * @type {HTMLInputElement}
  */
 const nome = document.querySelector('#nome');
 const sobrenome = document.querySelector('#sobrenome');
 
 /**
- * Seleciona elementos relacionados à senha:
- * input de senha e ícones de alternância de visibilidade.
+ * Seleciona os elementos relacionados à senha:
+ * - Campo de senha.
+ * - Ícone de olho aberto (mostrar senha).
+ * - Ícone de olho fechado (ocultar senha).
  */
 const senha = document.querySelector("#senha");
 const olhoAberto = document.querySelector("#mostrarSenha");
 const olhoFechado = document.querySelector("#esconderSenha");
 
 /**
- * Seleciona o ícone que abrirá o modal explicativo do e-mail secundário.
- * Define também o título e o texto do modal.
+ * Seleciona o ícone de ajuda referente ao e-mail secundário.
+ * Define título e texto exibidos dentro do modal de explicação.
  */
 const modalEmailSecundario = document.querySelector('#helperIcon');
 const tituloModal = "E-mail Secundário";
 const textoModal = "Campo não obrigatório\nCaso deseje preencher esse campo, digite um e-mail válido\nEste e-mail receberá seu endereço AIESEC e sua senha.";
 
 /**
- * Seleciona elementos para exibir mensagens de erro ou ajuda.
+ * Seleciona elementos destinados a exibir mensagens de erro ou ajuda
+ * relacionados ao preenchimento de nome, sobrenome e senha.
  */
 const erroNome = document.querySelector("#erro_nome");
 const erroSobrenome = document.querySelector("#erro_sobrenome");
+
+/**
+ * Seleciona mensagens de validação da senha:
+ * - erro_senha1: mínimo de 8 caracteres e sem espaços.
+ * - erro_senha2: pelo menos 1 letra minúscula.
+ * - erro_senha3: pelo menos 1 letra maiúscula.
+ * - erro_senha4: pelo menos 1 número e 1 caractere especial.
+ * @type {HTMLElement[]}
+ */
 const erroSenha = [
-  document.querySelector('#erro_senha1'), // 8+ chars, sem espaço
-  document.querySelector('#erro_senha2'), // pelo menos 1 letra minúscula
-  document.querySelector('#erro_senha3'), // pelo menos 1 letra maiúscula
-  document.querySelector('#erro_senha4')  // pelo menos 1 número e 1 caractere especial
+  document.querySelector('#erro_senha1'),
+  document.querySelector('#erro_senha2'),
+  document.querySelector('#erro_senha3'),
+  document.querySelector('#erro_senha4')
 ];
 
 /**
- * Seleção do input de e-mail secundário e mensagens de ajuda.
+ * Seleciona o campo de e-mail secundário e os elementos que exibem
+ * a lista de domínios de e-mail permitidos.
  */
 const emailSecundario = document.querySelector('#email_sec');
 const emailsValidos = [
@@ -54,18 +68,21 @@ const emailsValidos = [
 ];
 
 /**
- * Seleciona input e elementos de pré-visualização da foto.
+ * Seleciona os elementos relacionados à foto do usuário:
+ * - Input do tipo "file".
+ * - Imagem de pré-visualização.
+ * - Mensagem de erro para formato inválido.
  */
 const fotoInput = document.querySelector('#foto');
 const previewFoto = document.querySelector('#user');
 const erroFoto = document.querySelector('#erro_foto');
 
 
-
 // ------------------- Mensagens iniciais ------------------- //
 
 /**
- * Define mensagens iniciais de ajuda ou erro nos inputs.
+ * Define mensagens de orientação para os inputs logo no carregamento da página.
+ * Inclui instruções para nome, sobrenome, senha e e-mail secundário.
  */
 erroNome.textContent = "Informe seu nome";
 erroSobrenome.textContent = "Informe seu Sobrenome";
@@ -82,36 +99,35 @@ erroSenha[2].textContent = 'Pelo menos 1 letra maiúscula (A-Z)';
 erroSenha[3].textContent = 'Pelo menos 1 número (0-9) e 1 caractere especial (@$!%*?&)';
 
 
-
 // ------------------- EVENT LISTENERS ------------------- //
 
 /**
- * Valida os inputs de nome e sobrenome ao digitar.
+ * Aplica validação em tempo real aos inputs de nome e sobrenome.
  */
 nome.addEventListener('input', () => validarTexto(nome, erroNome, 'nome'));
 sobrenome.addEventListener('input', () => validarTexto(sobrenome, erroSobrenome, 'sobrenome'));
 
 /**
- * Valida o input de senha ao digitar.
+ * Valida a senha conforme o usuário digita.
  */
 senha.addEventListener('input', () => validarSenha(senha, erroSenha));
 
 /**
- * Alterna a visibilidade da senha ao clicar nos ícones.
+ * Alterna a visibilidade da senha (mostrar/ocultar) ao clicar nos ícones.
  */
 olhoFechado.addEventListener('click', () => toggleSenha(senha, true, olhoAberto, olhoFechado));
 olhoAberto.addEventListener('click', () => toggleSenha(senha, false, olhoAberto, olhoFechado));
 
 /**
- * Abre modal de ajuda explicando sobre e-mail secundário.
+ * Abre modal de ajuda explicando sobre o e-mail secundário.
  */
 modalEmailSecundario.addEventListener('click', () => {
   criarModal(tituloModal, textoModal);
 });
 
 /**
- * Valida e-mail secundário ao digitar.
- * Aceita apenas domínios permitidos definidos em validarEmailSecundario().
+ * Valida o domínio do e-mail secundário em tempo real.
+ * Aceita apenas domínios definidos em validarEmailSecundario().
  */
 emailSecundario.addEventListener('input', () => {
   const valor = emailSecundario.value.trim();
@@ -131,26 +147,35 @@ emailSecundario.addEventListener('input', () => {
 });
 
 /**
- * Mostra a pré-visualização da imagem selecionada.
- * Verifica se o arquivo é uma imagem antes de exibir.
+ * Mostra a pré-visualização da foto selecionada no input de arquivo.
  */
 fotoInput.addEventListener('change', () => {
-  // Inicializa o preview da imagem
-previewImagem(fotoInput,previewFoto, erroFoto);
+  previewImagem(fotoInput, previewFoto, erroFoto);
 });
+
+/**
+ * Restaura a imagem padrão ao clicar no botão de reset do formulário.
+ */
+form.addEventListener("reset", () => {
+  setTimeout(() => limpar(previewFoto), 0);
+});
+
 
 // ------------------- Envio do formulário ------------------- //
 
 /**
- * Evento de envio do formulário.
- * Realiza validações antes de enviar e exibe alerta com e-mail gerado.
- * Mostra spinner de carregamento durante o processamento.
+ * Controla o envio do formulário:
+ * - Evita envio automático.
+ * - Exibe spinner de carregamento.
+ * - Valida os campos obrigatórios.
+ * - Gera e exibe o e-mail institucional.
+ * - Reseta o formulário após envio.
  */
 form.addEventListener('submit', async function (event) {
-  event.preventDefault(); // Evita envio padrão
-  mostrarSpinner();       // Mostra spinner de carregamento
+  event.preventDefault(); 
+  mostrarSpinner();
 
-  // Valida os campos obrigatórios
+  // Validação dos campos obrigatórios
   const nomeValido = validarTexto(nome, erroNome, 'nome');
   const sobrenomeValido = validarTexto(sobrenome, erroSobrenome, 'sobrenome');
   const senhaValida = validarSenha(senha, erroSenha);
@@ -161,17 +186,14 @@ form.addEventListener('submit', async function (event) {
   //   return;
   // }
 
-  // Formata os valores para o e-mail
   const inputNome = nome.value.toLowerCase().trim();
   const inputSobrenome = sobrenome.value.toLowerCase().trim();
 
-  // Simula processamento assíncrono (ex: validação ou request)
+  // Simula processamento assíncrono
   await new Promise(resolve => setTimeout(resolve, 2000));
-  esconderSpinner(); // Esconde spinner
+  esconderSpinner();
 
-  // Exibe alerta com o e-mail gerado
   alert(`O e-mail ${gerarEmail(inputNome, inputSobrenome)}, pertencente a ${inputNome} ${inputSobrenome} foi gerado com sucesso.`);
 
-  // Limpa o formulário
   form.reset();
 });
