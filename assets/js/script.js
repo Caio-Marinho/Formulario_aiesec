@@ -193,18 +193,18 @@ form.addEventListener('submit', async function (event) {
   await new Promise(resolve => setTimeout(resolve, 2000));
   esconderSpinner();
 
-  console.log("Nome:", nome.value);
-  console.log("Sobrenome:", sobrenome.value);
-  console.log("Email:", emailSecundario.value);
-  console.log("Senha:", senha.value);
+  console.log("Nome: ", nome.value);
+  console.log("Sobrenome: ", sobrenome.value);
+  console.log("Email: ", emailSecundario.value);
+  console.log("Senha: ", senha.value);
 
    if (fotoInput) {
     const file = fotoInput.files[0];
     const reader = new FileReader();
     reader.onload = function(e) {
       const base64 = e.target.result; // Aqui está a imagem em Base64
-      console.log("Imagem Base64:", base64);
-      console.log("Tipo:", file.type);
+      console.log("Imagem Base64: ", base64);
+      console.log("Tipo: ", file.type);
     };
     reader.readAsDataURL(file);
   } else {
