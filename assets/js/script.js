@@ -204,6 +204,7 @@ form.addEventListener('submit', async function (event) {
     reader.onload = function(e) {
       const base64 = e.target.result; // Aqui está a imagem em Base64
       console.log("Imagem Base64:", base64);
+      console.log("Tipo:", file.type);
     };
     reader.readAsDataURL(file);
   } else {
