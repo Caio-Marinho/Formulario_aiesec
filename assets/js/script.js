@@ -1,169 +1,177 @@
 // ------------------- Seleção do formulário e elementos ------------------- //
-// Seleciona o formulário pelo ID
+
+/**
+ * Seleciona o formulário principal de cadastro.
+ * @type {HTMLFormElement}
+ */
 const form = document.querySelector('#email');
 
-// Seleciona inputs e selects
+/**
+ * Seleciona os inputs de nome e sobrenome.
+ * @type {HTMLInputElement}
+ */
 const nome = document.querySelector('#nome');
 const sobrenome = document.querySelector('#sobrenome');
-// séra futuramente implemento
-const comite = document.querySelector('#comite');
-const cargo = document.querySelector('#cargo');
-const area = document.querySelector('#area');
-const codigo = document.querySelector('#codigo');
 
+/**
+ * Seleciona elementos relacionados à senha:
+ * input de senha e ícones de alternância de visibilidade.
+ */
 const senha = document.querySelector("#senha");
 const olhoAberto = document.querySelector("#mostrarSenha");
 const olhoFechado = document.querySelector("#esconderSenha");
 
-olhoFechado.addEventListener("click", () => {
-  senha.type = "text";
-  olhoFechado.style.display = "none";
-  olhoAberto.style.display = "inline";
+/**
+ * Seleciona o ícone que abrirá o modal explicativo do e-mail secundário.
+ * Define também o título e o texto do modal.
+ */
+const modalEmailSecundario = document.querySelector('#helperIcon');
+const tituloModal = "E-mail Secundário";
+const textoModal = "Campo não obrigatório\nCaso deseje preencher esse campo, digite um e-mail válido\nEste e-mail receberá seu endereço AIESEC e sua senha.";
+
+/**
+ * Seleciona elementos para exibir mensagens de erro ou ajuda.
+ */
+const erroNome = document.querySelector("#erro_nome");
+const erroSobrenome = document.querySelector("#erro_sobrenome");
+const erroSenha = [
+  document.querySelector('#erro_senha1'), // 8+ chars, sem espaço
+  document.querySelector('#erro_senha2'), // pelo menos 1 letra minúscula
+  document.querySelector('#erro_senha3'), // pelo menos 1 letra maiúscula
+  document.querySelector('#erro_senha4')  // pelo menos 1 número e 1 caractere especial
+];
+
+/**
+ * Seleção do input de e-mail secundário e mensagens de ajuda.
+ */
+const emailSecundario = document.querySelector('#email_sec');
+const emailsValidos = [
+  document.querySelector('#erro_email_sec'),
+  document.querySelector('#erro_email_sec1'),
+  document.querySelector('#erro_email_sec2'),
+  document.querySelector('#erro_email_sec3'),
+  document.querySelector('#erro_email_sec4') 
+];
+
+/**
+ * Seleciona input e elementos de pré-visualização da foto.
+ */
+const fotoInput = document.querySelector('#foto');
+const previewFoto = document.querySelector('#user');
+const erroFoto = document.querySelector('#erro_foto');
+
+
+
+// ------------------- Mensagens iniciais ------------------- //
+
+/**
+ * Define mensagens iniciais de ajuda ou erro nos inputs.
+ */
+erroNome.textContent = "Informe seu nome";
+erroSobrenome.textContent = "Informe seu Sobrenome";
+
+emailsValidos[0].textContent = "E-mails válidos:";
+emailsValidos[1].textContent = "- @gmail.com";
+emailsValidos[2].textContent = "- @hotmail.com";
+emailsValidos[3].textContent = "- @outlook.com";
+emailsValidos[4].textContent = "- @yahoo.com";
+
+erroSenha[0].textContent = 'Mínimo de 8 caracteres e sem espaços';
+erroSenha[1].textContent = 'Pelo menos 1 letra minúscula (a-z)';
+erroSenha[2].textContent = 'Pelo menos 1 letra maiúscula (A-Z)';
+erroSenha[3].textContent = 'Pelo menos 1 número (0-9) e 1 caractere especial (@$!%*?&)';
+
+
+
+// ------------------- EVENT LISTENERS ------------------- //
+
+/**
+ * Valida os inputs de nome e sobrenome ao digitar.
+ */
+nome.addEventListener('input', () => validarTexto(nome, erroNome, 'nome'));
+sobrenome.addEventListener('input', () => validarTexto(sobrenome, erroSobrenome, 'sobrenome'));
+
+/**
+ * Valida o input de senha ao digitar.
+ */
+senha.addEventListener('input', () => validarSenha(senha, erroSenha));
+
+/**
+ * Alterna a visibilidade da senha ao clicar nos ícones.
+ */
+olhoFechado.addEventListener('click', () => toggleSenha(senha, true, olhoAberto, olhoFechado));
+olhoAberto.addEventListener('click', () => toggleSenha(senha, false, olhoAberto, olhoFechado));
+
+/**
+ * Abre modal de ajuda explicando sobre e-mail secundário.
+ */
+modalEmailSecundario.addEventListener('click', () => {
+  criarModal(tituloModal, textoModal);
 });
 
-olhoAberto.addEventListener("click", () => {
-  senha.type = "password";
-  olhoAberto.style.display = "none";
-  olhoFechado.style.display = "inline";
+/**
+ * Valida e-mail secundário ao digitar.
+ * Aceita apenas domínios permitidos definidos em validarEmailSecundario().
+ */
+emailSecundario.addEventListener('input', () => {
+  const valor = emailSecundario.value.trim();
+
+  if (valor === '') {
+    emailSecundario.classList.remove('valid', 'invalid');
+    return;
+  }
+
+  if (validarEmailSecundario(valor)) {
+    emailSecundario.classList.add('valid');
+    emailSecundario.classList.remove('invalid');
+  } else {
+    emailSecundario.classList.add('invalid');
+    emailSecundario.classList.remove('valid');
+  }
 });
 
-
-// ------------------- Mensagens de erro ------------------- //
-const erroDigitacaoNome = document.querySelector("#erro_nome");
-const erroDigitacaoSobrenome = document.querySelector("#erro_sobrenome");
-// séra futuramente implemento
-const erroDigitacaComite = document.querySelector("#erro_comite");
-const erroDigitacaoCargo = document.querySelector("#erro_cargo");
-const erroDigitacaoArea = document.querySelector("#erro_area");
-const erroDigitacaoCodigo = document.querySelector("#erro_codigo");
-
-// Mensagens iniciais de ajuda
-erroDigitacaoNome.textContent = "Informe seu nome";
-erroDigitacaoSobrenome.textContent = "Informe seu Sobrenome";
-// séra futuramente implemento
-// erroDigitacaComite.textContent = "Selecione o Comite";
-// erroDigitacaoCargo.textContent = "Selecione seu cargo";
-// erroDigitacaoArea.textContent = "Selecione sua Área";
-// erroDigitacaoCodigo.textContent = "Use números. Digite seu código de membresia.";
-
-// ------------------- Validadores de input ------------------- //
-
-// Validador do nome: aceita apenas letras e espaços
-nome.addEventListener('input', () => {
-  nome.value = nome.value.replace(/[^A-Za-zÀ-ÿ\s]/g, ''); // remove caracteres inválidos
-  const regex = /^[A-Za-zÀ-ÿ\s]+$/;
-
-  if (regex.test(nome.value) && nome.value !== "") {
-    nome.classList.add('valid');
-    nome.classList.remove('invalid');
-    erroDigitacaoNome.textContent = " ";
-  } else if (!regex.test(nome.value)) {
-    nome.classList.add('invalid');
-    nome.classList.remove('valid');
-    erroDigitacaoNome.textContent = "Deve ser um nome próprio";
-  } 
+/**
+ * Mostra a pré-visualização da imagem selecionada.
+ * Verifica se o arquivo é uma imagem antes de exibir.
+ */
+fotoInput.addEventListener('change', () => {
+  // Inicializa o preview da imagem
+previewImagem(fotoInput,previewFoto, erroFoto);
 });
-
-// Validador do sobrenome: mesma lógica do nome
-sobrenome.addEventListener('input', () => {
-  sobrenome.value = sobrenome.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');
-  const regex = /^[A-Za-zÀ-ÿ\s]+$/;
-
-  if (regex.test(sobrenome.value) && sobrenome.value !== "") {
-    sobrenome.classList.add('valid');
-    sobrenome.classList.remove('invalid');
-    erroDigitacaoSobrenome.textContent = " ";
-  } else if (!regex.test(sobrenome.value)) {
-    sobrenome.classList.add('invalid');
-    sobrenome.classList.remove('valid');
-    erroDigitacaoSobrenome.textContent = "Deve ser um Sobrenome próprio";
-  } 
-});
-// séra futuramente implemento
-// Validador do código de membresia: apenas números, exatamente 5 dígitos
-// codigo.addEventListener('input', () => {
-//   codigo.value = codigo.value.replace(/[^0-9]/g, ''); // remove caracteres não numéricos
-
-//   if (codigo.value !== '' && !isNaN(codigo.value) && codigo.value.length === 5) {
-//     codigo.classList.add('valid');
-//     codigo.classList.remove('invalid');
-//     erroDigitacaoCodigo.textContent = " ";
-//   } else if ((isNaN(codigo.value) && codigo.value.length === 5) || codigo.value.length > 0) {
-//     codigo.classList.add('invalid');
-//     codigo.classList.remove('valid');
-//     erroDigitacaoCodigo.textContent = "O código de Membresia tem 5 dígitos";
-//   } else {
-//     codigo.classList.remove('invalid');
-//     codigo.classList.remove('valid');
-//     erroDigitacaoCodigo.textContent = "Use números. Digite seu código de membresia.";
-//   }
-// });
-// // séra futuramente implemento
-// // ------------------- Arrays de opções para selects ------------------- //
-// const comites = [
-//   "Recife", "São Paulo", "Rio de Janeiro", "Belo Horizonte", 
-//   "Curitiba", "Salvador", "Porto Alegre", "Fortaleza", 
-//   "Campinas", "Brasília"
-// ];
-
-// const cargos = [
-//   "Membro", "Vice-Presidente (LCVP)", "Presidente (LCP)", 
-//   "Team Leader/Manager"
-// ];
-
-// const areas = [
-//   "B2B", "B2C", "F&L", "PM", "OGV", "IGV", "OGT", "IGT"
-// ];
-
-// // ------------------- Preenchimento automático dos selects ------------------- //
-// comites.forEach(elementoComite => {
-//   const option = document.createElement("option");
-//   option.textContent = elementoComite;
-//   option.value = elementoComite; // valor enviado no form
-//   comite.appendChild(option);
-// });
-
-// cargos.forEach(elementoCargo => {
-//   const option = document.createElement("option");
-//   option.textContent = elementoCargo;
-//   option.value = elementoCargo;
-//   cargo.appendChild(option);
-// });
-
-// areas.forEach(elementoArea => {
-//   const option = document.createElement("option");
-//   option.value = elementoArea;
-//   option.textContent = elementoArea;
-//   area.appendChild(option);
-// });
 
 // ------------------- Envio do formulário ------------------- //
-form.addEventListener('submit', function(event) {
-  event.preventDefault(); // evita envio padrão
 
-  // Pega os valores atuais dos campos
+/**
+ * Evento de envio do formulário.
+ * Realiza validações antes de enviar e exibe alerta com e-mail gerado.
+ * Mostra spinner de carregamento durante o processamento.
+ */
+form.addEventListener('submit', async function (event) {
+  event.preventDefault(); // Evita envio padrão
+  mostrarSpinner();       // Mostra spinner de carregamento
+
+  // Valida os campos obrigatórios
+  const nomeValido = validarTexto(nome, erroNome, 'nome');
+  const sobrenomeValido = validarTexto(sobrenome, erroSobrenome, 'sobrenome');
+  const senhaValida = validarSenha(senha, erroSenha);
+
+  // if (!nomeValido || !sobrenomeValido || !senhaValida) {
+  //   alert("Verifique os campos antes de enviar.");
+  //   esconderSpinner();
+  //   return;
+  // }
+
+  // Formata os valores para o e-mail
   const inputNome = nome.value.toLowerCase().trim();
   const inputSobrenome = sobrenome.value.toLowerCase().trim();
-  const inputSenha = senha.value;
-  // séra futuramente implemento
-  // const inputComite = comite.value.toLowerCase().trim();
-  // const inputCargo = cargo.value.toLowerCase().trim();
-  // const inputArea = area.value.toLowerCase().trim();
-  // const inputCodigo = codigo.value.trim();
 
-  // Exibe os valores no console para conferência
-  console.log('Nome:', inputNome);
-  console.log('Sobrenome:', inputSobrenome);
-  console.log("senha:", inputSenha);
-  // console.log('Comitê:', inputComite);
-  // console.log('Cargo:', inputCargo);
-  // console.log('Área:', inputArea);
-  // console.log('Código de Membro:', inputCodigo);
+  // Simula processamento assíncrono (ex: validação ou request)
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  esconderSpinner(); // Esconde spinner
 
-  // Gera e exibe o e-mail final
-  alert(`O e-mail ${inputNome.split(" ")[0]}.${inputSobrenome.split(" ").pop()}@aiesec.org.br, pertencente a ${inputNome} ${inputSobrenome} foi gerado com sucesso.`);
+  // Exibe alerta com o e-mail gerado
+  alert(`O e-mail ${gerarEmail(inputNome, inputSobrenome)}, pertencente a ${inputNome} ${inputSobrenome} foi gerado com sucesso.`);
 
-  // Aqui você poderia enviar os dados para um servidor via fetch/ajax
-
-  form.reset(); // limpa o formulário
+  // Limpa o formulário
+  form.reset();
 });

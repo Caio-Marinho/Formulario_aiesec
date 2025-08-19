@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,24 +11,32 @@
   <link rel="stylesheet" href="./assets/css/style.css">
   <link rel="icon" href="./assets/img/Logo-Aiesec.png">
 </head>
+
 <body>
-<header>
+  <header>
     <div class="brand" aria-label="AIESEC">
-        <span class="brand__badge" aria-hidden="true">
-            <img src="./assets/img/Aiesec.png" alt="Aiesec">
-        </span>
-        <span></span>
+      <span class="imagem_usuario" aria-hidden="true">
+        <img id="user" src="./assets/img/user.png" alt="usuario">
+      </span>
+      <span class="brand__badge" aria-hidden="true">
+        <img  src="./assets/img/Aiesec.png" alt="Aiesec">
+      </span>
     </div>
-</header>
+  </header>
 
   <main>
+    <!-- Spinner de carregamento -->
+    <div id="spinner" class="spinner-overlay" style="display: none;">
+      <div class="spinner"></div>
+    </div>
+
     <section class="card" aria-labelledby="titulo">
       <div class="card__head">
         <h1 id="titulo" class="card__title">Formulário de Cadastro para e-mail institucional</h1>
         <p class="card__subtitle">Preencha para gerar um e-mail institucional</p>
       </div>
 
-      <form action="#" method="post"id="email" novalidate>
+      <form action="#" method="post" id="email" novalidate>
         <fieldset class="grid grid--2">
           <!-- Nome -->
           <div>
@@ -39,7 +48,8 @@
           <!-- Sobrenome -->
           <div>
             <label for="sobrenome" class="required">Sobrenome</label>
-            <input id="sobrenome" name="sobrenome" type="text" placeholder="Ex.: Santos" autocomplete="family-name" required />
+            <input id="sobrenome" name="sobrenome" type="text" placeholder="Ex.: Santos" autocomplete="family-name"
+              required />
             <p class="helper" id="erro_sobrenome"></p>
           </div>
 
@@ -53,8 +63,30 @@
             <p class="helper" id="erro_senha2"></p>
             <p class="helper" id="erro_senha3"></p>
             <p class="helper" id="erro_senha4"></p>
-            <p class="helper" id="erro_senha5"></p>
           </div>
+
+          <!-- Email Secundário -->
+          <div class="campoEmailSecundario">
+            <label for="email_sec" class="">E-mail Secundário</label>
+            <input id="email_sec" name="email_sec" type="email" placeholder="Ex.: exemplo@gmail.com" required />
+            <i class="bi bi-question-circle" id="helperIcon"></i>
+            <p class="helper" id="erro_email_sec"></p>
+            <p class="helper" id="erro_email_sec1"></p>
+            <p class="helper" id="erro_email_sec2"></p>
+            <p class="helper" id="erro_email_sec3"></p>
+            <p class="helper" id="erro_email_sec4"></p>
+          </div>
+
+          <!-- Fotografia -->
+          <div class="campo-foto">
+            <label for="foto" class="required">Fotografia</label>
+            <input type="file" id="foto" name="foto" accept="image/*" />
+            <div class="preview-container">
+              <img id="previewFoto" src="#" alt="Pré-visualização da foto" style="display:none;" />
+            </div>
+            <p class="helper" id="erro_foto"></p>
+          </div>
+
           <!---Comitê (Select)(ver possibilidade de implementar no futuro)
           <div>
             <label for="comite" class="required">Comitê</label>
@@ -94,7 +126,7 @@
         <div class="actions" role="group" aria-label="Ações do formulário">
           <button class="btn btn--primary" type="submit">Enviar cadastro</button>
           <button class="btn btn--ghost" type="reset">Limpar</button>
-        </div> 
+        </div>
       </form>
     </section>
   </main>
@@ -102,6 +134,8 @@
   <footer>
     <p>&copy AIESEC — 2025.</p>
   </footer>
+  <script src="./assets/js/utils.js"></script>
   <script src="./assets/js/script.js"></script>
 </body>
+
 </html>
