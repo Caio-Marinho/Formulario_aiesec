@@ -543,9 +543,7 @@ async function buscarDados(url,email) {
       headers: {
         "Content-Type": "application/json" // enviando JSON
       },
-      body: JSON.stringify({
-        "email":email
-    })
+      body: JSON.stringify(dados)
     });
     
     if (!response.ok) {

@@ -203,12 +203,11 @@ form.addEventListener('submit', async function (event) {
     telefone: document.getElementById('telefone').value,
     foto: previewFoto.src // já pega a preview atual
   };
-  const urlBuscarUsuarios = "https://script.google.com/macros/s/AKfycbxYL4BJligQFwxmw4jMoSAtlJfD5h8ft2we_vyHpusrw5OpIJ_C2wmpzgmsCpIvDx0t/exec";
+  const urlBuscarUsuarios = "https://kaigabriel12.pythonanywhere.com/proxy";
   const inserirUsuarios = "";
   // 🔹 Aguardando o email ser gerado
   const emailGerado = await gerarEmail(dados.nome, dados.sobrenome, urlBuscarUsuarios);
   console.log("Email gerado:", emailGerado);
-
   // 🔹 Abre modal de confirmação
   criarModalConfirmacao(dados, async () => {
     // 🔹 Só mostra spinner DEPOIS da confirmação
