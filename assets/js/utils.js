@@ -1,10 +1,11 @@
-// ------------------- FUNÇÕES REUTILIZÁVEIS ------------------- //
+// =================== FUNÇÕES REUTILIZÁVEIS =================== //
 
 /**
  * Pausa a execução por uma quantidade específica de milissegundos.
  * Usado em validações assíncronas ou feedback temporário.
  * @param {number} ms - Tempo em milissegundos para pausar.
  * @returns {Promise<void>} Promise resolvida após o tempo especificado.
+ * @nota Segurança: Usar apenas para UX; não bloqueia thread principal.
  */
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -15,15 +16,18 @@ function sleep(ms) {
  * Divide o texto em parágrafos com base nas quebras de linha (\n).
  * @param {string} titulo - Título exibido no cabeçalho do modal.
  * @param {string} mensagem - Corpo da mensagem, aceita "\n" como quebra.
+ * @param {string} urlLogo - URL opcional de uma logo que aparecerá no modal.
+ * @nota Possíveis erros: Certifique-se que urlLogo é válida; imagens externas podem falhar.
  */
-function criarModalPopUp(titulo, mensagem) {
+function criarModalPopUp(titulo, mensagem, urlLogo) {
     const modalOverlay = document.createElement('div');
     modalOverlay.classList.add('modal-overlay');
 
     const modalBox = document.createElement('div');
     modalBox.classList.add('modal-box');
+    modalBox.style.position = 'relative'; // necessário para posicionar logo
 
-    // Header
+    // ------------------- Header ------------------- //
     const modalHeader = document.createElement('div');
     modalHeader.classList.add('modal-header');
 
@@ -37,7 +41,7 @@ function criarModalPopUp(titulo, mensagem) {
     modalHeader.appendChild(h2);
     modalHeader.appendChild(btnFechar);
 
-    // Body
+    // ------------------- Body ------------------- //
     const modalBody = document.createElement('div');
     modalBody.classList.add('modal-body');
 
@@ -48,17 +52,26 @@ function criarModalPopUp(titulo, mensagem) {
         modalBody.appendChild(p);
     });
 
-    // Footer
+    // ------------------- Footer ------------------- //
     const modalFooter = document.createElement('div');
     modalFooter.classList.add('modal-footer');
 
-    // Eventos
+    // ------------------- Logo ------------------- //
+    if (urlLogo) {
+        const imgLogo = document.createElement('img');
+        imgLogo.src = urlLogo;
+        imgLogo.alt = "Logo";
+        imgLogo.classList.add('modal-logo');
+        modalBox.appendChild(imgLogo);
+    }
+
+    // ------------------- Eventos ------------------- //
     btnFechar.addEventListener('click', () => modalOverlay.remove());
     modalOverlay.addEventListener('click', e => {
         if (e.target === modalOverlay) modalOverlay.remove();
     });
 
-    // Montagem
+    // ------------------- Montagem ------------------- //
     modalBox.appendChild(modalHeader);
     modalBox.appendChild(modalBody);
     modalBox.appendChild(modalFooter);
@@ -68,18 +81,22 @@ function criarModalPopUp(titulo, mensagem) {
 
 /**
  * Cria um modal de confirmação com dados do usuário.
- * Inclui animação de ✔️ ao confirmar, e executa callback após fechamento.
- * @param {Object} dados - Dados do usuário para exibir no modal.
+ * Inclui animação de ✔️ ao confirmar e executa callback após fechamento.
+ * @param {Object} dados - Dados do usuário {nome, sobrenome, emailGerado, emailPessoal, telefone, foto}.
  * @param {Function} onConfirm - Função chamada após confirmação e fechamento do modal.
+ * @param {string} urlLogo - URL opcional de uma logo que aparecerá no modal.
+ * @nota Segurança: Evitar injetar HTML não confiável em 'dados'.
+ * @nota Possíveis erros: 'dados' incompletos podem quebrar a renderização.
  */
-function criarModalConfirmacao(dados, onConfirm) {
+function criarModalConfirmacao(dados, onConfirm, urlLogo) {
     const modalOverlay = document.createElement('div');
     modalOverlay.classList.add('modal-overlay');
 
     const modalBox = document.createElement('div');
     modalBox.classList.add('modal-box');
+    modalBox.style.position = 'relative';
 
-    // Header
+    // ------------------- Header ------------------- //
     const modalHeader = document.createElement('div');
     modalHeader.classList.add('modal-header');
 
@@ -93,7 +110,7 @@ function criarModalConfirmacao(dados, onConfirm) {
     modalHeader.appendChild(h2);
     modalHeader.appendChild(btnFechar);
 
-    // Body
+    // ------------------- Body ------------------- //
     const modalBody = document.createElement('div');
     modalBody.classList.add('modal-body');
     modalBody.innerHTML = `
@@ -105,13 +122,15 @@ function criarModalConfirmacao(dados, onConfirm) {
         ${dados.foto ? `<img src="${dados.foto}" class="imagem_usuario">` : ""}
     `;
 
-    // Footer
+    // ------------------- Footer ------------------- //
     const modalFooter = document.createElement('div');
     modalFooter.classList.add('modal-footer');
 
     const btnVoltar = document.createElement('button');
     btnVoltar.textContent = "Voltar";
     btnVoltar.classList.add('btn-cancelar');
+    btnVoltar.style.left = '5%';
+    btnVoltar.style.position = "absolute";
 
     const btnConfirmar = document.createElement('button');
     btnConfirmar.textContent = "Confirmar";
@@ -120,13 +139,21 @@ function criarModalConfirmacao(dados, onConfirm) {
     modalFooter.appendChild(btnVoltar);
     modalFooter.appendChild(btnConfirmar);
 
-    let confirmado = false; // Flag para saber se o usuário confirmou
+    // ------------------- Logo ------------------- //
+    if (urlLogo) {
+        const imgLogo = document.createElement('img');
+        imgLogo.src = urlLogo;
+        imgLogo.alt = "Logo";
+        imgLogo.classList.add('modal-logo');
+        modalBox.appendChild(imgLogo);
+    }
 
-    // Eventos
+    let confirmado = false;
+
+    // ------------------- Eventos ------------------- //
     btnVoltar.addEventListener('click', () => modalOverlay.remove());
 
     btnConfirmar.addEventListener('click', () => {
-        // Mostra animação de ✔️ e mensagem de sucesso
         modalBody.innerHTML = `
             <div class="check-container">
                 <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
@@ -136,14 +163,14 @@ function criarModalConfirmacao(dados, onConfirm) {
                 <p>Dados confirmados com sucesso!</p>
             </div>
         `;
-        modalFooter.innerHTML = ""; // remove botões
+        modalFooter.innerHTML = "";
         confirmado = true;
     });
 
     const fecharModal = () => {
         modalOverlay.remove();
         if (confirmado && typeof onConfirm === "function") {
-            onConfirm(); // só chama se confirmado
+            onConfirm();
         }
     };
 
@@ -152,7 +179,7 @@ function criarModalConfirmacao(dados, onConfirm) {
         if (e.target === modalOverlay) modalOverlay.remove();
     });
 
-    // Montagem
+    // ------------------- Montagem ------------------- //
     modalBox.appendChild(modalHeader);
     modalBox.appendChild(modalBody);
     modalBox.appendChild(modalFooter);
@@ -166,19 +193,25 @@ function criarModalConfirmacao(dados, onConfirm) {
  * @param {HTMLInputElement} input - Input de texto.
  * @param {HTMLElement} erroElemento - Elemento para exibir mensagens de erro.
  * @param {string} tipo - Tipo de dado (nome/sobrenome) para a mensagem.
+ * @nota Segurança: Remove caracteres especiais para prevenir injeção.
  */
-function validarTexto(input, erroElemento, tipo) {
-  input.value = input.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');
-  const regex = /^[A-Za-zÀ-ÿ\s]+$/;
-  if (regex.test(input.value) && input.value !== "") {
-    input.classList.add('valid');
-    input.classList.remove('invalid');
-    erroElemento.textContent = " ";
-  } else {
-    input.classList.add('invalid');
-    input.classList.remove('valid');
-    erroElemento.textContent = `Deve ser um ${tipo} próprio`;
-  }
+async function validarTexto(input, erroElemento, tipo) {
+    input.value = input.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');
+    const regex = /^[A-Za-zÀ-ÿ\s]+$/;
+    if (regex.test(input.value) && input.value !== "") {
+        input.classList.add('valid');
+        input.classList.remove('invalid');
+        erroElemento.textContent = " ";
+    } else {
+        input.classList.add('invalid');
+        input.classList.remove('valid');
+        erroElemento.textContent = `Deve ser um ${tipo} próprio`;
+        if (input.value === "") {
+            await sleep(2000);
+            input.classList.remove('valid', 'invalid');
+            erroElemento.textContent = `Informe seu ${tipo}`;
+        }
+    }
 }
 
 /**
@@ -186,6 +219,7 @@ function validarTexto(input, erroElemento, tipo) {
  * @param {HTMLInputElement} input - Campo de senha.
  * @param {HTMLElement[]} erros - Lista de elementos que exibem regras de senha.
  * @returns {boolean} True se todos os critérios forem atendidos.
+ * @nota Segurança: Não armazene senhas em texto puro; apenas valida visualmente.
  */
 function validarSenha(input, erros) {
     const valor = input.value;
@@ -244,14 +278,13 @@ function validarEmailSecundario(email) {
  * @param {HTMLElement} erroElemento - Elemento para mostrar a mensagem de erro
  * @returns {boolean} true se o telefone for válido
  */
-function validarTelefone(input, erroElemento) {
+async function validarTelefone(input, erroElemento) {
     // Remove espaços e caracteres não numéricos para validação
-    const valor = input.value.replace(/\D/g, '');
 
+    input.value = formatarTelefone(input)
     // Regex: DDD (2 dígitos) + 9 + 4 ou 5 dígitos + 4 dígitos
-    const regex = /^(\d{2})9\d{4,5}\d{4}$/;
-
-    if (regex.test(valor)) {
+    const regex = /^0?\(\d{2}\)\s?9\d{4}-\d{4}$/;
+    if (regex.test(input.value)) {
         input.classList.add('valid');
         input.classList.remove('invalid');
         erroElemento.textContent = '';
@@ -260,8 +293,35 @@ function validarTelefone(input, erroElemento) {
         input.classList.add('invalid');
         input.classList.remove('valid');
         erroElemento.textContent = 'Digite um telefone válido no formato (DDD) 9XXXX-XXXX';
+        if (input.value === "") {
+            await sleep(2000);
+            input.classList.remove('valid', 'invalid');
+            erroElemento.textContent = 'Informe seu telefone';
+        }
         return false;
     }
+}
+
+/**
+ * Formata um número de telefone no padrão (99) 9 9999-9999
+ * @param {string} valor - Apenas números do telefone
+ * @returns {string} Telefone formatado
+ */
+function formatarTelefone(input) {
+    // Remove tudo que não for número
+    const valor = input.value.replace(/\D/g, '');
+
+    // Limita a 11 dígitos
+    if (valor.length > 11) valor = valor.slice(0, 11);
+
+    let resultado = '';
+
+    if (valor.length > 0) resultado += '(' + valor.substring(0, 2);
+    if (valor.length >= 3) resultado += ') ' + valor.substring(2, 3);
+    if (valor.length >= 4) resultado += valor.substring(3, 7);
+    if (valor.length >= 8) resultado += '-' + valor.substring(7);
+
+    return resultado;
 }
 
 /**
@@ -276,6 +336,96 @@ function mostrarSpinner() {
  */
 function esconderSpinner() {
     document.getElementById('spinner').style.display = 'none';
+}
+
+async function downloadCredenciais(dados) {
+    mostrarNotificacao(`${gerarEmail(dados.nome, dados.sobrenome)}`, "sucesso", 2500)
+    await sleep(3000)
+    const conteudo = `Email institucional: ${dados.emailGerado}\nSenha: ${dados.senha}`;
+    const blob = new Blob([conteudo], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${dados.nome}_credenciais.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+// Exemplo de uso depois que o spinner fechar
+async function esperarESpinnerFechar(dados) {
+    // Aguarda enquanto o spinner estiver visível
+    while (document.getElementById('spinner').style.display !== 'none') {
+        await sleep(100); // checa a cada 100ms
+    }
+
+    // Depois que o spinner desaparecer, faz o download
+    downloadCredenciais(dados);
+}
+
+/**
+ * Mostra uma notificação flutuante no canto superior direito.
+ * @param {string} mensagem - Texto da notificação.
+ * @param {'sucesso'|'erro'} tipo - Tipo da notificação: sucesso (verde) ou erro (vermelho).
+ * @param {number} duracao - Tempo em ms que a notificação ficará visível.
+ */
+function mostrarNotificacao(mensagem, tipo = 'sucesso', duracao = 3000) {
+    // Cria container principal caso ainda não exista
+    let container = document.getElementById('notificacaoContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'notificacaoContainer';
+        container.style.position = 'fixed';
+        container.style.top = '20px';
+        container.style.right = '20px';
+        container.style.zIndex = 9999;
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
+        container.style.gap = '10px';
+        document.body.appendChild(container);
+    }
+
+    // Cria a notificação
+    const noti = document.createElement('div');
+    noti.style.padding = '10px 20px';
+    noti.style.borderRadius = '8px';
+    noti.style.color = '#fff';
+    noti.style.fontWeight = 'bold';
+    noti.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+    noti.style.opacity = '0';
+    noti.style.transform = 'translateY(-20px)';
+    noti.style.transition = 'all 0.3s ease';
+
+    // Define cor conforme o tipo
+    if (tipo === 'sucesso') {
+        noti.style.backgroundColor = '#28a745'; // verde
+        noti.textContent = `E-mail: ${mensagem} Gerado com Sucesso!`;
+    } else if (tipo === 'erro') {
+        noti.style.backgroundColor = '#dc3545'; // vermelho
+    }
+
+    container.appendChild(noti);
+
+    // Anima entrada
+    requestAnimationFrame(() => {
+        noti.style.opacity = '1';
+        noti.style.transform = 'translateY(0)';
+    });
+    // Volta a página para o topo
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth' // remove se quiser instantâneo
+    });
+
+    // Remove após duracao
+    setTimeout(() => {
+        noti.style.opacity = '0';
+        noti.style.transform = 'translateY(-20px)';
+        setTimeout(() => container.removeChild(noti), 5000);
+    }, duracao);
 }
 
 /**

@@ -81,10 +81,13 @@ const emailsValidos = [
  * - Imagem de pré-visualização.
  * - Mensagem de erro para formato inválido.
  */
+const modalFoto = document.querySelector('#helperIconFoto');
+const tituloModalFoto = "Imagem";
+const textoModalFoto = "Campo não obrigatório\nCaso deseje preencher esse campo, Insira uma imagens nos formatos PNG,JPG ou JPGE.";
 const fotoInput = document.querySelector('#foto');
 const previewFoto = document.querySelector('#user');
 const erroFoto = document.querySelector('#erro_foto');
-
+const logo = "./assets/img/Logo-Aiesec.png";
 
 // ------------------- Mensagens iniciais ------------------- //
 
@@ -94,7 +97,7 @@ const erroFoto = document.querySelector('#erro_foto');
  */
 erroNome.textContent = "Informe seu nome";
 erroSobrenome.textContent = "Informe seu Sobrenome";
-
+erroTelefone.textContent = "Informe seu telefone";
 emailsValidos[0].textContent = "E-mails válidos:";
 emailsValidos[1].textContent = "- @gmail.com";
 emailsValidos[2].textContent = "- @hotmail.com";
@@ -130,11 +133,15 @@ olhoAberto.addEventListener('click', () => toggleSenha(senha, false, olhoAberto,
  * Abre modal de ajuda explicando sobre o e-mail secundário.
  */
 modalEmailSecundario.addEventListener('click', () => {
-  criarModalPopUp(tituloModalEmailSec, textoModalEmailSec);
+  criarModalPopUp(tituloModalEmailSec, textoModalEmailSec, logo);
 });
 
-modalTelefone.addEventListener('click',() => {
-  criarModalPopUp(tituloModalTelefone,textoModalTelefone)
+modalTelefone.addEventListener('click', () => {
+  criarModalPopUp(tituloModalTelefone, textoModalTelefone, logo)
+})
+
+modalFoto.addEventListener('click', () => {
+  criarModalPopUp(tituloModalFoto, textoModalFoto, logo)
 })
 
 /**
@@ -191,8 +198,9 @@ form.addEventListener('submit', async function (event) {
     nome: document.getElementById("nome").value,
     sobrenome: document.getElementById("sobrenome").value,
     emailGerado: `${document.getElementById("nome").value}.${document.getElementById("sobrenome").value}@aiesec.org.br`,
+    senha: document.getElementById('senha').value,
     emailPessoal: document.getElementById("email_sec").value,
-    
+    telefone: document.getElementById('telefone').value,
     foto: previewFoto.src // já pega a preview atual
   };
 
@@ -221,7 +229,8 @@ form.addEventListener('submit', async function (event) {
     // Simula processamento assíncrono
     await new Promise(resolve => setTimeout(resolve, 2000));
     esconderSpinner();
-
+    // Aguarda o spinner fechar e então gera o TXT
+    esperarESpinnerFechar(dados);
     console.log("Nome: ", nome.value);
     console.log("Sobrenome: ", sobrenome.value);
     console.log("Email pessoal: ", emailSecundario.value);
@@ -240,8 +249,6 @@ form.addEventListener('submit', async function (event) {
       console.log("Nenhuma imagem selecionada");
     }
 
-    alert(`O e-mail ${gerarEmail(inputNome, inputSobrenome)}, pertencente a ${inputNome} ${inputSobrenome} foi gerado com sucesso.`);
-
     form.reset();
-  });
+  }, logo);
 });

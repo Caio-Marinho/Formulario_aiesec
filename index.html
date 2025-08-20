@@ -34,6 +34,7 @@
       <div class="card__head">
         <h1 id="titulo" class="card__title">Formulário de Cadastro para e-mail institucional</h1>
         <p class="card__subtitle">Preencha para gerar um e-mail institucional</p>
+        <div id="notificacaoContainer"></div>
       </div>
 
       <form action="#" method="post" id="email" novalidate>
@@ -84,9 +85,10 @@
           </div>
 
           <!-- Fotografia -->
-          <div class="campo-foto">
-            <label for="foto" class="required">Fotografia</label>
+          <div class="campoFoto">
+            <label for="foto" class="">Foto</label>
             <input type="file" id="foto" name="foto" accept="image/*" />
+            <i class="bi bi-question-circle" id="helperIconFoto"></i>
             <div class="preview-container">
               <img class="padrao" id="previewFoto" src="#" alt="Pré-visualização da foto" />
             </div>
