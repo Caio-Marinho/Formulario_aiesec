@@ -361,8 +361,10 @@ async function esperarESpinnerFechar(dados) {
         await sleep(100); // checa a cada 100ms
     }
 
-    // Depois que o spinner desaparecer, faz o download
-    downloadCredenciais(dados);
+    if (dados.emailPessoal === "") {
+        // Depois que o spinner desaparecer, faz o download
+        downloadCredenciais(dados);
+    }
 }
 
 /**
