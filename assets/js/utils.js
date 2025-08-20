@@ -11,21 +11,19 @@ function sleep(ms) {
 }
 
 /**
- * Cria e exibe um modal dinâmico.
+ * Cria e exibe um modal de informação.
  * Divide o texto em parágrafos com base nas quebras de linha (\n).
  * @param {string} titulo - Título exibido no cabeçalho do modal.
  * @param {string} mensagem - Corpo da mensagem, aceita "\n" como quebra.
  */
-function criarModal(titulo, mensagem) {
-    // Overlay escuro por trás do modal
+function criarModalPopUp(titulo, mensagem) {
     const modalOverlay = document.createElement('div');
     modalOverlay.classList.add('modal-overlay');
 
-    // Caixa principal
     const modalBox = document.createElement('div');
     modalBox.classList.add('modal-box');
 
-    // ------------------- Header ------------------- //
+    // Header
     const modalHeader = document.createElement('div');
     modalHeader.classList.add('modal-header');
 
@@ -39,84 +37,155 @@ function criarModal(titulo, mensagem) {
     modalHeader.appendChild(h2);
     modalHeader.appendChild(btnFechar);
 
-    // ------------------- Body ------------------- //
+    // Body
     const modalBody = document.createElement('div');
     modalBody.classList.add('modal-body');
 
-    // Divide mensagem em linhas e cria <p> para cada
-    const linhas = mensagem.split('\n');
-    linhas.forEach(linha => {
-        let texto = linha.trim();
-        if (texto && !/[.!?]$/.test(texto)) {
-            texto += '.'; // garante pontuação final
-        }
+    mensagem.split('\n').forEach(linha => {
+        const texto = linha.trim() + (!/[.!?]$/.test(linha.trim()) ? '.' : '');
         const p = document.createElement('p');
         p.textContent = texto;
         modalBody.appendChild(p);
     });
 
-    // ------------------- Footer ------------------- //
+    // Footer
     const modalFooter = document.createElement('div');
     modalFooter.classList.add('modal-footer');
-    modalFooter.textContent = ''; // opcional
 
-    // ------------------- Eventos ------------------- //
+    // Eventos
     btnFechar.addEventListener('click', () => modalOverlay.remove());
-    modalOverlay.addEventListener('click', (e) => {
+    modalOverlay.addEventListener('click', e => {
         if (e.target === modalOverlay) modalOverlay.remove();
     });
 
-    // ------------------- Montagem ------------------- //
+    // Montagem
     modalBox.appendChild(modalHeader);
     modalBox.appendChild(modalBody);
     modalBox.appendChild(modalFooter);
     modalOverlay.appendChild(modalBox);
-
     document.body.appendChild(modalOverlay);
 }
 
 /**
- * Valida um input de texto (nome ou sobrenome).
- * Remove caracteres inválidos e fornece mensagens de erro dinâmicas.
- * @param {HTMLInputElement} input - Campo de input a validar.
- * @param {HTMLElement} erroElemento - Elemento onde mostrar mensagens.
- * @param {string} tipo - Tipo do campo ('nome' ou 'sobrenome').
- * @returns {Promise<boolean>} true se válido, false caso contrário.
+ * Cria um modal de confirmação com dados do usuário.
+ * Inclui animação de ✔️ ao confirmar, e executa callback após fechamento.
+ * @param {Object} dados - Dados do usuário para exibir no modal.
+ * @param {Function} onConfirm - Função chamada após confirmação e fechamento do modal.
  */
-async function validarTexto(input, erroElemento, tipo) {
-    input.value = input.value.replace(/[^A-Za-zÀ-ÿ\s]/g, ''); // limpa caracteres
-    const regex = /^[A-Za-zÀ-ÿ\s]+$/;
+function criarModalConfirmacao(dados, onConfirm) {
+    const modalOverlay = document.createElement('div');
+    modalOverlay.classList.add('modal-overlay');
 
-    if (regex.test(input.value) && input.value !== "") {
-        input.classList.add('valid');
-        input.classList.remove('invalid');
-        erroElemento.textContent = " ";
-        return true;
-    } else {
-        input.classList.add('invalid');
-        input.classList.remove('valid');
-        erroElemento.textContent = `Deve ser um ${tipo} próprio`;
+    const modalBox = document.createElement('div');
+    modalBox.classList.add('modal-box');
 
-        // Se vazio, restaura mensagem depois de 2s
-        if (input.value === "") {
-            await sleep(2000);
-            input.classList.remove('invalid');
-            erroElemento.textContent = `Informe seu ${tipo}`;
+    // Header
+    const modalHeader = document.createElement('div');
+    modalHeader.classList.add('modal-header');
+
+    const h2 = document.createElement('h2');
+    h2.textContent = "Confirme seus dados";
+
+    const btnFechar = document.createElement('span');
+    btnFechar.innerHTML = '&times;';
+    btnFechar.classList.add('btn-fechar');
+
+    modalHeader.appendChild(h2);
+    modalHeader.appendChild(btnFechar);
+
+    // Body
+    const modalBody = document.createElement('div');
+    modalBody.classList.add('modal-body');
+    modalBody.innerHTML = `
+        <p><strong>Nome:</strong> ${dados.nome}</p>
+        <p><strong>Sobrenome:</strong> ${dados.sobrenome}</p>
+        <p><strong>Email institucional:</strong> ${dados.emailGerado}</p>
+        <p><strong>Email pessoal:</strong> ${dados.emailPessoal}</p>
+        <p><strong>Telefone:</strong> ${dados.telefone}</p>
+        ${dados.foto ? `<img src="${dados.foto}" class="imagem_usuario">` : ""}
+    `;
+
+    // Footer
+    const modalFooter = document.createElement('div');
+    modalFooter.classList.add('modal-footer');
+
+    const btnVoltar = document.createElement('button');
+    btnVoltar.textContent = "Voltar";
+    btnVoltar.classList.add('btn-cancelar');
+
+    const btnConfirmar = document.createElement('button');
+    btnConfirmar.textContent = "Confirmar";
+    btnConfirmar.classList.add('btn-confirmar');
+
+    modalFooter.appendChild(btnVoltar);
+    modalFooter.appendChild(btnConfirmar);
+
+    let confirmado = false; // Flag para saber se o usuário confirmou
+
+    // Eventos
+    btnVoltar.addEventListener('click', () => modalOverlay.remove());
+
+    btnConfirmar.addEventListener('click', () => {
+        // Mostra animação de ✔️ e mensagem de sucesso
+        modalBody.innerHTML = `
+            <div class="check-container">
+                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark-check" fill="none" d="M14 27l7 7 16-16"/>
+                </svg>
+                <p>Dados confirmados com sucesso!</p>
+            </div>
+        `;
+        modalFooter.innerHTML = ""; // remove botões
+        confirmado = true;
+    });
+
+    const fecharModal = () => {
+        modalOverlay.remove();
+        if (confirmado && typeof onConfirm === "function") {
+            onConfirm(); // só chama se confirmado
         }
-        return false;
-    }
+    };
+
+    btnFechar.addEventListener('click', fecharModal);
+    modalOverlay.addEventListener('click', e => {
+        if (e.target === modalOverlay) modalOverlay.remove();
+    });
+
+    // Montagem
+    modalBox.appendChild(modalHeader);
+    modalBox.appendChild(modalBody);
+    modalBox.appendChild(modalFooter);
+    modalOverlay.appendChild(modalBox);
+    document.body.appendChild(modalOverlay);
 }
 
 /**
- * Valida a senha de acordo com critérios de segurança:
- * - Mínimo 8 caracteres
- * - Sem espaços
- * - Pelo menos 1 letra minúscula
- * - Pelo menos 1 letra maiúscula
- * - Pelo menos 1 número e 1 caractere especial
+ * Valida um campo de texto (nome ou sobrenome).
+ * Remove caracteres inválidos e atualiza estado visual e mensagem de erro.
+ * @param {HTMLInputElement} input - Input de texto.
+ * @param {HTMLElement} erroElemento - Elemento para exibir mensagens de erro.
+ * @param {string} tipo - Tipo de dado (nome/sobrenome) para a mensagem.
+ */
+function validarTexto(input, erroElemento, tipo) {
+  input.value = input.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');
+  const regex = /^[A-Za-zÀ-ÿ\s]+$/;
+  if (regex.test(input.value) && input.value !== "") {
+    input.classList.add('valid');
+    input.classList.remove('invalid');
+    erroElemento.textContent = " ";
+  } else {
+    input.classList.add('invalid');
+    input.classList.remove('valid');
+    erroElemento.textContent = `Deve ser um ${tipo} próprio`;
+  }
+}
+
+/**
+ * Valida a senha de acordo com critérios de segurança.
  * @param {HTMLInputElement} input - Campo de senha.
- * @param {HTMLElement[]} erros - Lista de mensagens relacionadas às regras.
- * @returns {boolean} true se todos os critérios forem atendidos.
+ * @param {HTMLElement[]} erros - Lista de elementos que exibem regras de senha.
+ * @returns {boolean} True se todos os critérios forem atendidos.
  */
 function validarSenha(input, erros) {
     const valor = input.value;
@@ -125,7 +194,6 @@ function validarSenha(input, erros) {
     const maiusculo = /[A-Z]/.test(valor);
     const caracterEspecial = /\d/.test(valor) && /[@$!%*?&]/.test(valor);
 
-    // Atualiza mensagens com cores
     if (valor !== "") {
         erros[0].style.color = minimo ? 'green' : 'red';
         erros[1].style.color = minusculo ? 'green' : 'red';
@@ -139,7 +207,6 @@ function validarSenha(input, erros) {
     const allOk = minimo && minusculo && maiusculo && caracterEspecial;
     input.classList.toggle('valid', allOk);
     input.classList.toggle('invalid', !allOk);
-
     if (valor === "") input.classList.remove('invalid');
 
     return allOk;
@@ -160,8 +227,8 @@ function toggleSenha(input, mostrar, olhoAberto, olhoFechado) {
 
 /**
  * Verifica se o e-mail informado pertence a domínios permitidos.
- * @param {string} email - E-mail informado no input.
- * @returns {boolean} true se válido, false caso contrário.
+ * @param {string} email - E-mail informado.
+ * @returns {boolean} True se válido, false caso contrário.
  */
 function validarEmailSecundario(email) {
     const dominiosPermitidos = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com'];
@@ -169,6 +236,32 @@ function validarEmailSecundario(email) {
     if (!regexEmail.test(email)) return false;
     const dominio = email.split('@')[1].toLowerCase();
     return dominiosPermitidos.includes(dominio);
+}
+
+/**
+ * Valida telefone brasileiro no formato (DDD) 9XXXX-XXXX
+ * @param {HTMLInputElement} input - Campo do telefone
+ * @param {HTMLElement} erroElemento - Elemento para mostrar a mensagem de erro
+ * @returns {boolean} true se o telefone for válido
+ */
+function validarTelefone(input, erroElemento) {
+    // Remove espaços e caracteres não numéricos para validação
+    const valor = input.value.replace(/\D/g, '');
+
+    // Regex: DDD (2 dígitos) + 9 + 4 ou 5 dígitos + 4 dígitos
+    const regex = /^(\d{2})9\d{4,5}\d{4}$/;
+
+    if (regex.test(valor)) {
+        input.classList.add('valid');
+        input.classList.remove('invalid');
+        erroElemento.textContent = '';
+        return true;
+    } else {
+        input.classList.add('invalid');
+        input.classList.remove('valid');
+        erroElemento.textContent = 'Digite um telefone válido no formato (DDD) 9XXXX-XXXX';
+        return false;
+    }
 }
 
 /**
@@ -187,7 +280,7 @@ function esconderSpinner() {
 
 /**
  * Mostra a pré-visualização da foto enviada.
- * Aceita apenas arquivos JPG e PNG.
+ * Aceita apenas arquivos JPG e PNG
  * @param {HTMLInputElement} fotoInput - Input do tipo file.
  * @param {HTMLImageElement} previewFoto - Elemento <img> para mostrar preview.
  * @param {HTMLElement} erroFoto - Elemento de erro para mensagens.

@@ -19,14 +19,14 @@
         <img id="user" src="./assets/img/user.png" alt="usuario">
       </span>
       <span class="brand__badge" aria-hidden="true">
-        <img  src="./assets/img/Aiesec.png" alt="Aiesec">
+        <img src="./assets/img/Aiesec.png" alt="Aiesec">
       </span>
     </div>
   </header>
 
   <main>
     <!-- Spinner de carregamento -->
-    <div id="spinner" class="spinner-overlay" style="display: none;">
+    <div id="spinner" class="spinner-overlay">
       <div class="spinner"></div>
     </div>
 
@@ -64,12 +64,18 @@
             <p class="helper" id="erro_senha3"></p>
             <p class="helper" id="erro_senha4"></p>
           </div>
-
+          <!-- Telefone -->
+          <div class="telefone">
+            <label for="telefone" class="">Telefone</label>
+            <input id="telefone" name="telefone" type="tel" placeholder="Ex.: (81) 91234-5678" inputmode="numeric" />
+            <i class="bi bi-question-circle" id="helperIconTelefone"></i>
+            <p class="helper" id="erro_telefone"></p>
+          </div>
           <!-- Email Secundário -->
           <div class="campoEmailSecundario">
-            <label for="email_sec" class="">E-mail Secundário</label>
-            <input id="email_sec" name="email_sec" type="email" placeholder="Ex.: exemplo@gmail.com" required />
-            <i class="bi bi-question-circle" id="helperIcon"></i>
+            <label for="email_sec" class="">E-mail Pessoal</label>
+            <input id="email_sec" name="email_sec" type="email" placeholder="Ex.: exemplo@gmail.com" />
+            <i class="bi bi-question-circle" id="helperIconEmailSec"></i>
             <p class="helper" id="erro_email_sec"></p>
             <p class="helper" id="erro_email_sec1"></p>
             <p class="helper" id="erro_email_sec2"></p>
@@ -82,7 +88,7 @@
             <label for="foto" class="required">Fotografia</label>
             <input type="file" id="foto" name="foto" accept="image/*" />
             <div class="preview-container">
-              <img id="previewFoto" src="#" alt="Pré-visualização da foto" style="display:none;" />
+              <img class="padrao" id="previewFoto" src="#" alt="Pré-visualização da foto" />
             </div>
             <p class="helper" id="erro_foto"></p>
           </div>

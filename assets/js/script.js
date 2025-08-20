@@ -28,9 +28,17 @@ const olhoFechado = document.querySelector("#esconderSenha");
  * Seleciona o ícone de ajuda referente ao e-mail secundário.
  * Define título e texto exibidos dentro do modal de explicação.
  */
-const modalEmailSecundario = document.querySelector('#helperIcon');
-const tituloModal = "E-mail Secundário";
-const textoModal = "Campo não obrigatório\nCaso deseje preencher esse campo, digite um e-mail válido\nEste e-mail receberá seu endereço AIESEC e sua senha.";
+const modalEmailSecundario = document.querySelector('#helperIconEmailSec');
+const tituloModalEmailSec = "E-mail Pessoal";
+const textoModalEmailSec = "Campo não obrigatório\nCaso deseje preencher esse campo, digite um e-mail válido\nEste e-mail receberá seu endereço AIESEC e sua senha.";
+
+// Evento para validar em tempo real
+const telefone = document.querySelector('#telefone');
+const erroTelefone = document.querySelector('#erro_telefone');
+
+const modalTelefone = document.querySelector('#helperIconTelefone');
+const tituloModalTelefone = "Telefone";
+const textoModalTelefone = "Campo não obrigatório\nCaso deseje preencher esse campo, digite um telefone válido.";
 
 /**
  * Seleciona elementos destinados a exibir mensagens de erro ou ajuda
@@ -122,8 +130,12 @@ olhoAberto.addEventListener('click', () => toggleSenha(senha, false, olhoAberto,
  * Abre modal de ajuda explicando sobre o e-mail secundário.
  */
 modalEmailSecundario.addEventListener('click', () => {
-  criarModal(tituloModal, textoModal);
+  criarModalPopUp(tituloModalEmailSec, textoModalEmailSec);
 });
+
+modalTelefone.addEventListener('click',() => {
+  criarModalPopUp(tituloModalTelefone,textoModalTelefone)
+})
 
 /**
  * Valida o domínio do e-mail secundário em tempo real.
@@ -160,6 +172,7 @@ form.addEventListener("reset", () => {
   setTimeout(() => limpar(previewFoto), 0);
 });
 
+telefone.addEventListener('input', () => validarTelefone(telefone, erroTelefone));
 
 // ------------------- Envio do formulário ------------------- //
 
@@ -173,44 +186,62 @@ form.addEventListener("reset", () => {
  */
 form.addEventListener('submit', async function (event) {
   event.preventDefault();
-  mostrarSpinner();
 
-  // Validação dos campos obrigatórios
-  const nomeValido = validarTexto(nome, erroNome, 'nome');
-  const sobrenomeValido = validarTexto(sobrenome, erroSobrenome, 'sobrenome');
-  const senhaValida = validarSenha(senha, erroSenha);
+  const dados = {
+    nome: document.getElementById("nome").value,
+    sobrenome: document.getElementById("sobrenome").value,
+    emailGerado: `${document.getElementById("nome").value}.${document.getElementById("sobrenome").value}@aiesec.org.br`,
+    emailPessoal: document.getElementById("email_sec").value,
+    
+    foto: previewFoto.src // já pega a preview atual
+  };
 
-  // if (!nomeValido || !sobrenomeValido || !senhaValida) {
-  //   alert("Verifique os campos antes de enviar.");
-  //   esconderSpinner();
-  //   return;
-  // }
+  // 🔹 Abre modal de confirmação
+  criarModalConfirmacao(dados, async () => {
+    console.log("Usuário confirmou envio!", dados);
 
-  const inputNome = nome.value.toLowerCase().trim();
-  const inputSobrenome = sobrenome.value.toLowerCase().trim();
+    // 🔹 Só mostra spinner DEPOIS da confirmação
+    mostrarSpinner();
 
-  // Simula processamento assíncrono
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  esconderSpinner();
+    // Validação dos campos obrigatórios
+    const nomeValido = validarTexto(nome, erroNome, 'nome');
+    const sobrenomeValido = validarTexto(sobrenome, erroSobrenome, 'sobrenome');
+    const senhaValida = validarSenha(senha, erroSenha);
 
-  console.log("Nome: ", nome.value);
-  console.log("Sobrenome: ", sobrenome.value);
-  console.log("Email: ", emailSecundario.value);
-  console.log("Senha: ", senha.value);
+    // if (!nomeValido || !sobrenomeValido || !senhaValida) {
+    //   await new Promise(resolve => setTimeout(resolve, 2000));
+    //   alert("Verifique os campos antes de enviar.");
+    //   esconderSpinner();
+    //   return;
+    // }
 
-   if (fotoInput) {
-    const file = fotoInput.files[0];
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const base64 = e.target.result; // Aqui está a imagem em Base64
-      console.log("Imagem Base64: ", base64);
-      console.log("Tipo: ", file.type);
-    };
-    reader.readAsDataURL(file);
-  } else {
-    console.log("Nenhuma imagem selecionada");
-  }
-  alert(`O e-mail ${gerarEmail(inputNome, inputSobrenome)}, pertencente a ${inputNome} ${inputSobrenome} foi gerado com sucesso.`);
+    const inputNome = nome.value.toLowerCase().trim();
+    const inputSobrenome = sobrenome.value.toLowerCase().trim();
 
-  form.reset();
+    // Simula processamento assíncrono
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    esconderSpinner();
+
+    console.log("Nome: ", nome.value);
+    console.log("Sobrenome: ", sobrenome.value);
+    console.log("Email pessoal: ", emailSecundario.value);
+    console.log("Senha: ", senha.value);
+
+    if (fotoInput.files.length > 0) {
+      const file = fotoInput.files[0];
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const base64 = e.target.result;
+        console.log("Imagem Base64: ", base64);
+        console.log("Tipo: ", file.type);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      console.log("Nenhuma imagem selecionada");
+    }
+
+    alert(`O e-mail ${gerarEmail(inputNome, inputSobrenome)}, pertencente a ${inputNome} ${inputSobrenome} foi gerado com sucesso.`);
+
+    form.reset();
+  });
 });

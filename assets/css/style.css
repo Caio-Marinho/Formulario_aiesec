@@ -166,6 +166,19 @@ select {
   transition: border-color .2s, box-shadow .2s;
 }
 
+input[type="tel"],
+select {
+  width: 100%;
+  appearance: none;
+  background: white;
+  color: var(--text);
+  border: 1.5px solid #d7e0ea;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 16px;
+  transition: border-color .2s, box-shadow .2s;
+}
+
 input::placeholder {
   color: #9fb3c8;
 }
@@ -256,8 +269,34 @@ input.invalid {
 
 .campoEmailSecundario i {
   position: absolute;
-  top: 5%;
-  right: 40%;
+  top: 4%;
+  right: 55%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #037EF3;
+  /* Azul do tema */
+  cursor: pointer;
+  font-size: 1.1rem;
+  position: absolute;
+}
+
+.telefone {
+  position: relative;
+}
+
+.telefone label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  /* Espaço entre a label e o ícone */
+  font-weight: 500;
+}
+
+.telefone i {
+  position: absolute;
+  top: 9px;
+  right: 70%;
   transform: translateY(-50%);
   cursor: pointer;
   font-size: 1.2rem;
@@ -330,6 +369,115 @@ input.invalid {
   text-align: right;
   font-size: 0.9rem;
 }
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  padding: 20px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-header, .modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-body p {
+  margin: 6px 0;
+}
+
+.btn-fechar {
+  cursor: pointer;
+  font-size: 22px;
+}
+
+.btn-cancelar, .btn-confirmar {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-cancelar {
+  background: #ccc;
+}
+
+.btn-confirmar {
+  background: #28a745;
+  color: #fff;
+}
+
+/* Animação de Check */
+.check-animation {
+  font-size: 80px;
+  color: #28a745;
+  animation: scaleUp 0.5s ease-in-out;
+}
+.check-container {
+  text-align: center;
+  padding: 20px;
+}
+
+.checkmark {
+  width: 80px;
+  height: 80px;
+  stroke: #28a745;
+  stroke-width: 4;
+  stroke-miterlimit: 10;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  margin-bottom: 15px;
+}
+
+.checkmark-circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 4;
+  stroke: #28a745;
+  fill: none;
+  animation: strokeCircle 0.6s ease forwards;
+}
+
+.checkmark-check {
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: strokeCheck 0.4s ease forwards 0.6s;
+}
+
+@keyframes strokeCircle {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes strokeCheck {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
 
 /* Overlay cobrindo toda a tela */
 .spinner-overlay {
@@ -339,10 +487,10 @@ input.invalid {
   width: 100%;
   height: 100%;
   background-color: rgba(3, 126, 243, 0.2); /* azul leve com transparência */
-  display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
+  display: none;
 }
 
 /* Spinner circular animado */
@@ -361,6 +509,9 @@ input.invalid {
   100% { transform: rotate(360deg); }
 }
 
+.padrao{
+  display:none;
+}
 
 .actions {
   display: flex;
