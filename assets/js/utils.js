@@ -543,15 +543,18 @@ async function buscarDados(url,email) {
       headers: {
         "Content-Type": "application/json" // enviando JSON
       },
-      body: JSON.stringify(dados)
+      body: JSON.stringify({
+        "email":email
+    })
     });
-
+    
     if (!response.ok) {
       throw new Error(`Erro na requisição: ${response.status}`);
     }
 
     const data = await response.json(); // converte a resposta em JSON
     console.log("Resposta do servidor:", data);
+    return data
   } catch (error) {
     console.error("Falha:", error);
   }

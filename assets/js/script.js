@@ -203,6 +203,11 @@ form.addEventListener('submit', async function (event) {
     telefone: document.getElementById('telefone').value,
     foto: previewFoto.src // já pega a preview atual
   };
+  const urlBuscarUsuarios = "https://script.google.com/macros/s/AKfycbxYL4BJligQFwxmw4jMoSAtlJfD5h8ft2we_vyHpusrw5OpIJ_C2wmpzgmsCpIvDx0t/exec";
+  const inserirUsuarios = "";
+  // 🔹 Aguardando o email ser gerado
+  const emailGerado = await gerarEmail(dados.nome, dados.sobrenome, urlBuscarUsuarios);
+  console.log("Email gerado:", emailGerado);
 
   // 🔹 Abre modal de confirmação
   criarModalConfirmacao(dados, async () => {
@@ -220,12 +225,11 @@ form.addEventListener('submit', async function (event) {
     //   esconderSpinner();
     //   return;
     // }
-    
+
     const inputNome = nome.value.toLowerCase().trim();
     const inputSobrenome = sobrenome.value.toLowerCase().trim();
-    const urlBuscarUsuarios = "https://script.google.com/macros/s/AKfycbxFYp4VQbAZ3v-KiI1zwFAzmjunhcvKLkGUV7bTX0eiA5luRWiYPP3keLq7Wsm69RUW/exec";
-    const inserirUsuarios = "";
-    await gerarEmail(inputNome,inputSobrenome,urlBuscarUsuarios)
+
+
     esconderSpinner();
     // Aguarda o spinner fechar e então gera o TXT
     esperarESpinnerFechar(dados);
@@ -246,7 +250,7 @@ form.addEventListener('submit', async function (event) {
     } else {
       console.log("Nenhuma imagem selecionada");
     }
-    
+
     form.reset();
   }, logo);
 });
