@@ -469,12 +469,90 @@ function limpar(preview) {
 }
 
 /**
- * Gera e-mail institucional a partir do nome e sobrenome.
- * Formato: nome.sobrenome@aiesec.org.br
+ * Limpa palavras removendo conectores e vogais soltas.
+ * @param {string} nomeCompleto - Nome completo do usuário.
+ * @returns {string[]} - Array de palavras limpas.
+ */
+function limparPalavras(nomeCompleto) {
+  const conectores = ["de","da","di","do","du"];
+  const vogaisSoltas = ["a","e","i","o","u"];
+
+  let palavras = nomeCompleto.toLowerCase().split(" ");
+
+  // Filtra palavras que não são conectores nem vogais soltas
+  palavras = palavras.filter(p => !conectores.includes(p) && !vogaisSoltas.includes(p));
+
+  return palavras;
+}
+
+function gerarCombinacoes(nomeCompleto) {
+  const palavras = limparPalavras(nomeCompleto);
+  const combinacoes = new Set();
+
+  for (let i = 0; i < palavras.length; i++) {
+    for (let j = 0; j < palavras.length; j++) {
+      if (i !== j) {
+        combinacoes.add(`${palavras[i]}.${palavras[j]}`);
+        combinacoes.add(`${palavras[i]}${palavras[j]}`);
+        combinacoes.add(`${palavras[i][0]}${palavras[j]}`); 
+        combinacoes.add(`${palavras[i]}${palavras[j][0]}`);
+        combinacoes.add(`${palavras[i][0]}${palavras[j][0]}`);
+      }
+    }
+  }
+
+  return Array.from(combinacoes);
+}
+
+/**
+ * Gera um e-mail único verificando se já existe no sistema via POST.
+ * Testa todas as combinações possíveis e, se necessário, adiciona um número incremental.
  * @param {string} nome - Nome do usuário.
  * @param {string} sobrenome - Sobrenome do usuário.
- * @returns {string} E-mail formatado.
+ * @returns {Promise<string>} - E-mail único gerado.
  */
-function gerarEmail(nome, sobrenome) {
-    return `${nome.split(" ")[0]}.${sobrenome.split(" ").pop()}@aiesec.org.br`;
+async function gerarEmail(nome, sobrenome,url) {
+  const combinacoes = gerarCombinacoes(nome, sobrenome);
+
+  // Verifica cada combinação
+  for (let email of combinacoes) {
+    const existe = await buscarDados(url,`${email}@aiesec.org.br`); // função POST que retorna true/false
+    if (!existe) {
+      return email + "@aiesec.org.br";
+    }
+  }
+
+  // Se todas as combinações existirem, adiciona número incremental
+  let contador = 1;
+  while (true) {
+    const email = `${limparPalavras(nome)}.${limparPalavras(sobrenome)}${contador}@exemplo.com`;
+    const existe = await buscarDados(url,email);
+    if (!existe) return email;
+    contador++;
+  }
+}
+
+
+async function buscarDados(url,email) {
+    const dados = {
+        "email":email
+    }
+    try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json" // enviando JSON
+      },
+      body: JSON.stringify(dados)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro na requisição: ${response.status}`);
+    }
+
+    const data = await response.json(); // converte a resposta em JSON
+    console.log("Resposta do servidor:", data);
+  } catch (error) {
+    console.error("Falha:", error);
+  }
 }

@@ -95,8 +95,8 @@ const logo = "./assets/img/Logo-Aiesec.png";
  * Define mensagens de orientação para os inputs logo no carregamento da página.
  * Inclui instruções para nome, sobrenome, senha e e-mail secundário.
  */
-erroNome.textContent = "Informe seu nome";
-erroSobrenome.textContent = "Informe seu Sobrenome";
+erroNome.textContent = "Informe seu nome(se tiver 2 ou 3 também informar)";
+erroSobrenome.textContent = "Informe seu Sobrenome(se tiver 2 ou 3 também informar)";
 erroTelefone.textContent = "Informe seu telefone";
 emailsValidos[0].textContent = "E-mails válidos:";
 emailsValidos[1].textContent = "- @gmail.com";
@@ -206,8 +206,6 @@ form.addEventListener('submit', async function (event) {
 
   // 🔹 Abre modal de confirmação
   criarModalConfirmacao(dados, async () => {
-    console.log("Usuário confirmou envio!", dados);
-
     // 🔹 Só mostra spinner DEPOIS da confirmação
     mostrarSpinner();
 
@@ -222,12 +220,12 @@ form.addEventListener('submit', async function (event) {
     //   esconderSpinner();
     //   return;
     // }
-
+    
     const inputNome = nome.value.toLowerCase().trim();
     const inputSobrenome = sobrenome.value.toLowerCase().trim();
-
-    // Simula processamento assíncrono
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    const urlBuscarUsuarios = "https://script.google.com/macros/s/AKfycbxFYp4VQbAZ3v-KiI1zwFAzmjunhcvKLkGUV7bTX0eiA5luRWiYPP3keLq7Wsm69RUW/exec";
+    const inserirUsuarios = "";
+    await gerarEmail(inputNome,inputSobrenome,urlBuscarUsuarios)
     esconderSpinner();
     // Aguarda o spinner fechar e então gera o TXT
     esperarESpinnerFechar(dados);
@@ -248,7 +246,7 @@ form.addEventListener('submit', async function (event) {
     } else {
       console.log("Nenhuma imagem selecionada");
     }
-
+    
     form.reset();
   }, logo);
 });
