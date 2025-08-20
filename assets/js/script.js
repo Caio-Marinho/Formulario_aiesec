@@ -197,7 +197,7 @@ form.addEventListener('submit', async function (event) {
   const dados = {
     nome: document.getElementById("nome").value,
     sobrenome: document.getElementById("sobrenome").value,
-    emailGerado: `${document.getElementById("nome").value}.${document.getElementById("sobrenome").value}@aiesec.org.br`,
+    emailGerado: gerarEmail(dados.nome, dados.sobrenome),
     senha: document.getElementById('senha').value,
     emailPessoal: document.getElementById("email_sec").value,
     telefone: document.getElementById('telefone').value,
@@ -206,8 +206,6 @@ form.addEventListener('submit', async function (event) {
   const urlBuscarUsuarios = "https://kaigabriel12.pythonanywhere.com/proxy";
   const inserirUsuarios = "";
   // 🔹 Aguardando o email ser gerado
-  const emailGerado = await gerarEmail(dados.nome, dados.sobrenome, urlBuscarUsuarios);
-  console.log("Email gerado:", emailGerado);
   // 🔹 Abre modal de confirmação
   criarModalConfirmacao(dados, async () => {
     // 🔹 Só mostra spinner DEPOIS da confirmação

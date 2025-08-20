@@ -474,34 +474,15 @@ function limpar(preview) {
  * @returns {string[]} - Array de palavras limpas.
  */
 function limparPalavras(nomeCompleto) {
-  const conectores = ["de","da","di","do","du"];
-  const vogaisSoltas = ["a","e","i","o","u"];
+    const conectores = ["de", "da", "di", "do", "du"];
+    const vogaisSoltas = ["a", "e", "i", "o", "u"];
 
-  let palavras = nomeCompleto.toLowerCase().split(" ");
+    let palavras = nomeCompleto.toLowerCase().split(" ");
 
-  // Filtra palavras que não são conectores nem vogais soltas
-  palavras = palavras.filter(p => !conectores.includes(p) && !vogaisSoltas.includes(p));
+    // Filtra palavras que não são conectores nem vogais soltas
+    palavras = palavras.filter(p => !conectores.includes(p) && !vogaisSoltas.includes(p));
 
-  return palavras;
-}
-
-function gerarCombinacoes(nomeCompleto) {
-  const palavras = limparPalavras(nomeCompleto);
-  const combinacoes = new Set();
-
-  for (let i = 0; i < palavras.length; i++) {
-    for (let j = 0; j < palavras.length; j++) {
-      if (i !== j) {
-        combinacoes.add(`${palavras[i]}.${palavras[j]}`);
-        combinacoes.add(`${palavras[i]}${palavras[j]}`);
-        combinacoes.add(`${palavras[i][0]}${palavras[j]}`); 
-        combinacoes.add(`${palavras[i]}${palavras[j][0]}`);
-        combinacoes.add(`${palavras[i][0]}${palavras[j][0]}`);
-      }
-    }
-  }
-
-  return Array.from(combinacoes);
+    return palavras;
 }
 
 /**
@@ -511,49 +492,32 @@ function gerarCombinacoes(nomeCompleto) {
  * @param {string} sobrenome - Sobrenome do usuário.
  * @returns {Promise<string>} - E-mail único gerado.
  */
-async function gerarEmail(nome, sobrenome,url) {
-  const combinacoes = gerarCombinacoes(nome, sobrenome);
-
-  // Verifica cada combinação
-  for (let email of combinacoes) {
-    const existe = await buscarDados(url,`${email}@aiesec.org.br`); // função POST que retorna true/false
-    if (!existe) {
-      return email + "@aiesec.org.br";
-    }
-  }
-
-  // Se todas as combinações existirem, adiciona número incremental
-  let contador = 1;
-  while (true) {
-    const email = `${limparPalavras(nome)}.${limparPalavras(sobrenome)}${contador}@exemplo.com`;
-    const existe = await buscarDados(url,email);
-    if (!existe) return email;
-    contador++;
-  }
+function gerarEmail(nome, sobrenome) {
+    let ultimoSobrenome = limparPalavras(sobrenome);
+    let primeiroNome = limparPalavras(nome)
+    let email = `${primeiroNome[0]}.${ultimoSobrenome.pop()}@aiesec.org.br`
+    return email;
 }
 
 
-async function buscarDados(url,email) {
-    const dados = {
-        "email":email
-    }
-    try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json" // enviando JSON
-      },
-      body: JSON.stringify(dados)
-    });
-    
-    if (!response.ok) {
-      throw new Error(`Erro na requisição: ${response.status}`);
-    }
 
-    const data = await response.json(); // converte a resposta em JSON
-    console.log("Resposta do servidor:", data);
-    return data
-  } catch (error) {
-    console.error("Falha:", error);
-  }
+async function buscarDados(url, email) {
+    const dados = { email: email };
+
+    try {
+        const response = await axios.post(url, dados, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+
+    } catch (error) {
+        // Axios encapsula o erro, então você pode pegar o status ou a mensagem
+        if (error.response) {
+            console.error(`Falha: ${error.response.status} - ${error.response.data.erro}`);
+        } else {
+            console.error("Falha:", error.message);
+        }
+    }
 }
