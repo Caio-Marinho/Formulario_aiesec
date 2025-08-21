@@ -210,13 +210,13 @@ form.addEventListener('submit', async function (event) {
   }
 
   const dados = {
-    "nome": formatarNome(nome.value),
-    "sobrenome": formatarNome(sobrenome.value),
-    "senha": senha.value,
-    "emailGerado": await gerarEmail(nome, sobrenome, erroNome, erroSobrenome, urlBuscarUsuarios),
-    "emailPessoal": emailSecundario.value,
-    "telefone": telefone.value,
-    "foto": previewFoto.src === logo ? "" : await dadosImagem(fotoInput)// já pega a preview atual
+    nome: formatarNome(nome.value),
+    sobrenome: formatarNome(sobrenome.value),
+    senha: senha.value,
+    emailGerado: await gerarEmail(nome, sobrenome, erroNome, erroSobrenome, urlBuscarUsuarios),
+    emailPessoal: emailSecundario.value,
+    telefone: telefone.value,
+    foto: previewFoto.src === logo ? "" : await dadosImagem(fotoInput)// já pega a preview atual
   };
   console.log(dados)
   // 🔹 Aguardando o email ser gerado

@@ -368,7 +368,7 @@ function formatarNome(nomeCompleto) {
         .toLowerCase()                            // Deixa tudo em minúsculas
         .trim()                                   // Remove espaços nas bordas
         .split(/\s+/)                             // Separa por qualquer quantidade de espaços
-        .map(palavra => 
+        .map(palavra =>
             palavra.charAt(0).toUpperCase() +     // Primeira letra maiúscula
             palavra.slice(1)                      // Restante minúsculo
         )
@@ -389,8 +389,8 @@ function esconderSpinner() {
     document.getElementById('spinner').style.display = 'none';
 }
 
-async function downloadCredenciais(dados,tipo="sucesso",duracao=2500) {
-    mostrarNotificacao(dados.emailGerado,tipo , duracao)
+async function downloadCredenciais(dados, tipo = "sucesso", duracao = 2500) {
+    mostrarNotificacao(dados.emailGerado, tipo, duracao)
     await sleep(3000)
     const conteudo = `Email institucional: ${dados.emailGerado}\nSenha: ${dados.senha}`;
     const blob = new Blob([conteudo], { type: "text/plain" });
@@ -575,7 +575,7 @@ function dadosImagem(imagem) {
         if (!file) return resolve(null);
 
         const reader = new FileReader();
-        reader.onload = (e) => resolve({ "base64": e.target.result, "tipo": file.type });
+        reader.onload = (e) => resolve({ base64: e.target.result, tipo: file.type });
         reader.onerror = reject;
 
         reader.readAsDataURL(file);
@@ -617,12 +617,12 @@ async function gerarEmail(nome, sobrenome, erroNome, erroSobrenome, url) {
             erroNome.textContent = "Já existe um e-mail gerado com esse nome.";
             erroSobrenome.textContent = "Já existe um e-mail gerado com esse sobrenome.";
             esconderSpinner();  // Esconde o spinner depois de tudo
-           // Volta a página para o topo
-    window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: 'smooth' // remove se quiser instantâneo
-    });
+            // Volta a página para o topo
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'smooth' // remove se quiser instantâneo
+            });
             return "";
         } else {
             // Loop para testar diferentes combinações de primeiro nome e sobrenome
@@ -650,11 +650,11 @@ async function gerarEmail(nome, sobrenome, erroNome, erroSobrenome, url) {
             erroSobrenome.textContent = "Já existe um e-mail gerado com esses sobrenomes.";
             esconderSpinner();  // Esconde o spinner depois de tudo
             // Volta a página para o topo
-    window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: 'smooth' // remove se quiser instantâneo
-    });
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'smooth' // remove se quiser instantâneo
+            });
             return "";
         }
     } else {
@@ -707,7 +707,7 @@ async function buscarUsuario(url, email) {
     }
 }
 
-async function inserirUsuarios(url,dados) {
+async function inserirUsuarios(url, dados) {
     try {
         // Utilizando fetch para fazer a requisição POST
         const response = await fetch(url, {
