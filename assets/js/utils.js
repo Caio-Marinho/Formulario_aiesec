@@ -12,39 +12,43 @@ function sleep(ms) {
 }
 
 /**
- * Cria e exibe um modal de informação.
- * Divide o texto em parágrafos com base nas quebras de linha (\n).
- * @param {string} titulo - Título exibido no cabeçalho do modal.
- * @param {string} mensagem - Corpo da mensagem, aceita "\n" como quebra.
- * @param {string} urlLogo - URL opcional de uma logo que aparecerá no modal.
- * @nota Possíveis erros: Certifique-se que urlLogo é válida; imagens externas podem falhar.
+ * Cria um modal simples de popup com título, mensagem e logo opcional.
+ * 
+ * @param {string} titulo - Título do modal.
+ * @param {string} mensagem - Mensagem a ser exibida no corpo do modal.
+ * @param {string} [urlLogo] - URL opcional da imagem da logo a ser exibida no modal.
  */
 function criarModalPopUp(titulo, mensagem, urlLogo) {
+    // Criação do overlay (fundo semitransparente) do modal
     const modalOverlay = document.createElement('div');
     modalOverlay.classList.add('modal-overlay');
 
+    // Criação da caixa do modal
     const modalBox = document.createElement('div');
     modalBox.classList.add('modal-box');
-    modalBox.style.position = 'relative'; // necessário para posicionar logo
+    modalBox.style.position = 'relative'; // Necessário para posicionar a logo corretamente
 
-    // ------------------- Header ------------------- //
+    // ------------------- Cabeçalho (Header) ------------------- //
     const modalHeader = document.createElement('div');
     modalHeader.classList.add('modal-header');
 
     const h2 = document.createElement('h2');
     h2.textContent = titulo;
 
+    // Botão de fechar o modal
     const btnFechar = document.createElement('span');
     btnFechar.innerHTML = '&times;';
     btnFechar.classList.add('btn-fechar');
 
+    // Adiciona título e botão de fechar ao cabeçalho
     modalHeader.appendChild(h2);
     modalHeader.appendChild(btnFechar);
 
-    // ------------------- Body ------------------- //
+    // ------------------- Corpo (Body) ------------------- //
     const modalBody = document.createElement('div');
     modalBody.classList.add('modal-body');
 
+    // Divide a mensagem em linhas e adiciona ao corpo
     mensagem.split('\n').forEach(linha => {
         const texto = linha.trim() + (!/[.!?]$/.test(linha.trim()) ? '.' : '');
         const p = document.createElement('p');
@@ -52,12 +56,13 @@ function criarModalPopUp(titulo, mensagem, urlLogo) {
         modalBody.appendChild(p);
     });
 
-    // ------------------- Footer ------------------- //
+    // ------------------- Rodapé (Footer) ------------------- //
     const modalFooter = document.createElement('div');
     modalFooter.classList.add('modal-footer');
 
     // ------------------- Logo ------------------- //
     if (urlLogo) {
+        // Se a URL da logo for fornecida, cria o elemento da imagem
         const imgLogo = document.createElement('img');
         imgLogo.src = urlLogo;
         imgLogo.alt = "Logo";
@@ -66,72 +71,80 @@ function criarModalPopUp(titulo, mensagem, urlLogo) {
     }
 
     // ------------------- Eventos ------------------- //
+    // Evento para fechar o modal ao clicar no botão de fechar
     btnFechar.addEventListener('click', () => modalOverlay.remove());
-    modalOverlay.addEventListener('click', e => {
-        if (e.target === modalOverlay) modalOverlay.remove();
-    });
+
+    // Não adiciona o evento de clique fora para fechar o modal (não será fechado ao clicar fora)
 
     // ------------------- Montagem ------------------- //
+    // Adiciona as partes do modal à estrutura
     modalBox.appendChild(modalHeader);
     modalBox.appendChild(modalBody);
     modalBox.appendChild(modalFooter);
     modalOverlay.appendChild(modalBox);
+
+    // Adiciona o modal ao corpo do documento
     document.body.appendChild(modalOverlay);
 }
 
 /**
- * Cria um modal de confirmação com dados do usuário.
- * Inclui animação de ✔️ ao confirmar e executa callback após fechamento.
- * @param {Object} dados - Dados do usuário {nome, sobrenome, emailGerado, emailPessoal, telefone, foto}.
- * @param {Function} onConfirm - Função chamada após confirmação e fechamento do modal.
- * @param {string} urlLogo - URL opcional de uma logo que aparecerá no modal.
- * @nota Segurança: Evitar injetar HTML não confiável em 'dados'.
- * @nota Possíveis erros: 'dados' incompletos podem quebrar a renderização.
+ * Cria um modal de confirmação para o usuário, exibindo os dados fornecidos e permitindo confirmar ou voltar.
+ * 
+ * @param {Object} dados - Objeto contendo os dados do usuário a serem exibidos no modal (nome, sobrenome, email, etc).
+ * @param {Function} onConfirm - Função callback que é executada após a confirmação do usuário.
+ * @param {string} [urlLogo] - URL opcional da imagem da logo a ser exibida no modal.
  */
 function criarModalConfirmacao(dados, onConfirm, urlLogo) {
+    // Criação do overlay (fundo semitransparente) do modal
     const modalOverlay = document.createElement('div');
     modalOverlay.classList.add('modal-overlay');
 
+    // Criação da caixa do modal
     const modalBox = document.createElement('div');
     modalBox.classList.add('modal-box');
     modalBox.style.position = 'relative';
 
-    // ------------------- Header ------------------- //
+    // ------------------- Cabeçalho (Header) ------------------- //
     const modalHeader = document.createElement('div');
     modalHeader.classList.add('modal-header');
 
     const h2 = document.createElement('h2');
     h2.textContent = "Confirme seus dados";
 
+    // Botão de fechar o modal
     const btnFechar = document.createElement('span');
     btnFechar.innerHTML = '&times;';
     btnFechar.classList.add('btn-fechar');
 
+    // Adiciona título e botão de fechar ao cabeçalho
     modalHeader.appendChild(h2);
     modalHeader.appendChild(btnFechar);
 
-    // ------------------- Body ------------------- //
+    // ------------------- Corpo (Body) ------------------- //
+    const logo = "./assets/img/Logo-Aiesec.png";
     const modalBody = document.createElement('div');
     modalBody.classList.add('modal-body');
     modalBody.innerHTML = `
         <p><strong>Nome:</strong> ${dados.nome}</p>
         <p><strong>Sobrenome:</strong> ${dados.sobrenome}</p>
         <p><strong>Email institucional:</strong> ${dados.emailGerado}</p>
-        <p><strong>Email pessoal:</strong> ${dados.emailPessoal}</p>
-        <p><strong>Telefone:</strong> ${dados.telefone}</p>
-        ${dados.foto ? `<img src="${dados.foto}" class="imagem_usuario">` : ""}
+        ${dados.emailPessoal ? `<p><strong>Email pessoal:</strong> ${dados.emailPessoal}</p>` : ""}
+        ${dados.telefone ? `<p><strong>Telefone:</strong> ${dados.telefone}</p>` : ""}
+        ${dados.foto ? `<img src="${dados.foto.base64}" class="imagem_usuario">` : ""}
     `;
 
-    // ------------------- Footer ------------------- //
+    // ------------------- Rodapé (Footer) ------------------- //
     const modalFooter = document.createElement('div');
     modalFooter.classList.add('modal-footer');
 
+    // Botão de voltar
     const btnVoltar = document.createElement('button');
     btnVoltar.textContent = "Voltar";
     btnVoltar.classList.add('btn-cancelar');
     btnVoltar.style.left = '5%';
     btnVoltar.style.position = "absolute";
 
+    // Botão de confirmar
     const btnConfirmar = document.createElement('button');
     btnConfirmar.textContent = "Confirmar";
     btnConfirmar.classList.add('btn-confirmar');
@@ -141,6 +154,7 @@ function criarModalConfirmacao(dados, onConfirm, urlLogo) {
 
     // ------------------- Logo ------------------- //
     if (urlLogo) {
+        // Se a URL da logo for fornecida, cria o elemento da imagem
         const imgLogo = document.createElement('img');
         imgLogo.src = urlLogo;
         imgLogo.alt = "Logo";
@@ -151,9 +165,12 @@ function criarModalConfirmacao(dados, onConfirm, urlLogo) {
     let confirmado = false;
 
     // ------------------- Eventos ------------------- //
+    // Evento para voltar (fecha o modal)
     btnVoltar.addEventListener('click', () => modalOverlay.remove());
 
+    // Evento para confirmar dados
     btnConfirmar.addEventListener('click', () => {
+        // Exibe o ícone de "check" de sucesso
         modalBody.innerHTML = `
             <div class="check-container">
                 <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
@@ -163,29 +180,38 @@ function criarModalConfirmacao(dados, onConfirm, urlLogo) {
                 <p>Dados confirmados com sucesso!</p>
             </div>
         `;
+        // Remove botões do rodapé
         modalFooter.innerHTML = "";
         confirmado = true;
     });
 
     const fecharModal = () => {
         modalOverlay.remove();
+        // Chama a função de confirmação, se fornecida
         if (confirmado && typeof onConfirm === "function") {
             onConfirm();
         }
     };
 
+    // Evento para fechar o modal ao clicar no botão de fechar
     btnFechar.addEventListener('click', fecharModal);
-    modalOverlay.addEventListener('click', e => {
-        if (e.target === modalOverlay) modalOverlay.remove();
-    });
+
+    // Não adiciona o evento de clique fora para fechar o modal
+    // modalOverlay.addEventListener('click', e => {
+    //     if (e.target === modalOverlay) modalOverlay.remove();
+    // });
 
     // ------------------- Montagem ------------------- //
+    // Adiciona as partes do modal à estrutura
     modalBox.appendChild(modalHeader);
     modalBox.appendChild(modalBody);
     modalBox.appendChild(modalFooter);
     modalOverlay.appendChild(modalBox);
+
+    // Adiciona o modal ao corpo do documento
     document.body.appendChild(modalOverlay);
 }
+
 
 /**
  * Valida um campo de texto (nome ou sobrenome).
@@ -202,6 +228,7 @@ async function validarTexto(input, erroElemento, tipo) {
         input.classList.add('valid');
         input.classList.remove('invalid');
         erroElemento.textContent = " ";
+        return true
     } else {
         input.classList.add('invalid');
         input.classList.remove('valid');
@@ -211,6 +238,7 @@ async function validarTexto(input, erroElemento, tipo) {
             input.classList.remove('valid', 'invalid');
             erroElemento.textContent = `Informe seu ${tipo}(se tiver 2 ou 3 também informar)`;
         }
+        return false
     }
 }
 
@@ -325,6 +353,29 @@ function formatarTelefone(input) {
 }
 
 /**
+ * Formata um nome completo, colocando a primeira letra de cada palavra em maiúscula
+ * e o restante em minúsculas.
+ *
+ * Exemplo:
+ *  - Entrada: "joÃO da silVA"
+ *  - Saída: "João Da Silva"
+ *
+ * @param {string} nomeCompleto - Nome completo a ser formatado.
+ * @returns {string} Nome formatado com capitalização correta.
+ */
+function formatarNome(nomeCompleto) {
+    return nomeCompleto
+        .toLowerCase()                            // Deixa tudo em minúsculas
+        .trim()                                   // Remove espaços nas bordas
+        .split(/\s+/)                             // Separa por qualquer quantidade de espaços
+        .map(palavra => 
+            palavra.charAt(0).toUpperCase() +     // Primeira letra maiúscula
+            palavra.slice(1)                      // Restante minúsculo
+        )
+        .join(" ");                               // Junta as palavras com espaço
+}
+
+/**
  * Exibe o spinner de carregamento.
  */
 function mostrarSpinner() {
@@ -338,8 +389,8 @@ function esconderSpinner() {
     document.getElementById('spinner').style.display = 'none';
 }
 
-async function downloadCredenciais(dados) {
-    mostrarNotificacao(`${gerarEmail(dados.nome, dados.sobrenome)}`, "sucesso", 2500)
+async function downloadCredenciais(dados,tipo="sucesso",duracao=2500) {
+    mostrarNotificacao(dados.emailGerado,tipo , duracao)
     await sleep(3000)
     const conteudo = `Email institucional: ${dados.emailGerado}\nSenha: ${dados.senha}`;
     const blob = new Blob([conteudo], { type: "text/plain" });
@@ -464,8 +515,20 @@ function previewImagem(fotoInput, previewFoto, erroFoto) {
  * Usada no reset do formulário.
  * @param {HTMLImageElement} preview - Elemento de preview da foto.
  */
-function limpar(preview) {
+function limpar(preview, nome, sobrenome, senha, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha) {
     preview.src = "./assets/img/user.png";
+    nome.classList.remove('invalid', 'valid');
+    sobrenome.classList.remove('invalid', 'valid');
+    senha.classList.remove('invalid', 'valid');
+    emailSecundario.classList.remove('invalid', 'valid');
+    telefone.classList.remove('invalid', 'valid');
+    erroNome.textContent = "Informe seu nome(se tiver 2 ou 3 também informar)";
+    erroSobrenome.textContent = "Informe seu Sobrenome(se tiver 2 ou 3 também informar)";
+    erroTelefone.textContent = "Informe seu telefone";
+    erroSenha[0].style.color = "black";
+    erroSenha[1].style.color = "black";
+    erroSenha[2].style.color = "black";
+    erroSenha[3].style.color = "black";
 }
 
 /**
@@ -477,11 +540,46 @@ function limparPalavras(nomeCompleto) {
     const conectores = ["de", "da", "di", "do", "du"];
     const vogaisSoltas = ["a", "e", "i", "o", "u"];
 
-    let palavras = nomeCompleto.toLowerCase().split(" ");
+    let palavras = nomeCompleto.toLowerCase().trim().split(/\s+/);
 
     // Filtra palavras que não são conectores nem vogais soltas
     palavras = palavras.filter(p => !conectores.includes(p) && !vogaisSoltas.includes(p));
     return palavras;
+}
+
+/**
+ * Função que converte uma imagem selecionada em um campo de input para Base64.
+ * 
+ * Esta função recebe um arquivo de imagem de um campo de input, lê o arquivo de forma assíncrona 
+ * e retorna um objeto com os dados da imagem (Base64 e tipo de arquivo).
+ * 
+ * @param {HTMLInputElement} imagem - O campo de input que contém o arquivo de imagem selecionado.
+ * @returns {Promise<Object>} Retorna uma Promise que resolve com um objeto contendo os dados da imagem:
+ *    - `base64` {string}: O conteúdo da imagem convertido para Base64.
+ *    - `tipo` {string}: O tipo MIME do arquivo (ex: "image/png").
+ * 
+ * @throws {string} Caso nenhum arquivo seja selecionado, a Promise será rejeitada com a mensagem "Nenhuma imagem selecionada".
+ * 
+ * @example
+ * const inputImagem = document.querySelector('input[type="file"]');
+ * DadosImagem(inputImagem).then(({ base64, tipo }) => {
+ *    console.log("Base64:", base64);
+ *    console.log("Tipo:", tipo);
+ * }).catch(error => {
+ *    console.log("Erro:", error);
+ * });
+ */
+function dadosImagem(imagem) {
+    return new Promise((resolve, reject) => {
+        const file = imagem.files[0];
+        if (!file) return resolve(null);
+
+        const reader = new FileReader();
+        reader.onload = (e) => resolve({ "base64": e.target.result, "tipo": file.type });
+        reader.onerror = reject;
+
+        reader.readAsDataURL(file);
+    });
 }
 
 /**
@@ -493,8 +591,8 @@ function limparPalavras(nomeCompleto) {
  */
 async function gerarEmail(nome, sobrenome, erroNome, erroSobrenome, url) {
     // Limpa as palavras do nome e sobrenome
-    let ultimoSobrenome = limparPalavras(sobrenome.value); // Corrigido para acessar .value
-    let primeiroNome = limparPalavras(nome.value); // Corrigido para acessar .value
+    const ultimoSobrenome = limparPalavras(sobrenome.value); // Corrigido para acessar .value
+    const primeiroNome = limparPalavras(nome.value); // Corrigido para acessar .value
 
     // Gera o email com base no primeiro nome e no último sobrenome
     let email = `${primeiroNome[0]}.${ultimoSobrenome[ultimoSobrenome.length - 1]}@aiesec.org.br`;
@@ -503,7 +601,7 @@ async function gerarEmail(nome, sobrenome, erroNome, erroSobrenome, url) {
     mostrarSpinner();
 
     // Chama a função para verificar se o e-mail já existe
-    let existe = await buscarDados(url, email);
+    let existe = await buscarUsuario(url, email);
 
     // Verifica se a resposta é um objeto com mais de uma chave (indicando que já existe)
     if (existe && Object.keys(existe).length > 1) {
@@ -519,7 +617,7 @@ async function gerarEmail(nome, sobrenome, erroNome, erroSobrenome, url) {
             erroNome.textContent = "Já existe um e-mail gerado com esse nome.";
             erroSobrenome.textContent = "Já existe um e-mail gerado com esse sobrenome.";
             esconderSpinner();  // Esconde o spinner depois de tudo
-            return false;
+            return "";
         } else {
             // Loop para testar diferentes combinações de primeiro nome e sobrenome
             for (let nomeComeco = 0; nomeComeco < primeiroNome.length; nomeComeco++) {  // Corrigido o limite de índice
@@ -527,7 +625,7 @@ async function gerarEmail(nome, sobrenome, erroNome, erroSobrenome, url) {
                     email = `${primeiroNome[nomeComeco]}.${ultimoSobrenome[sobrenomeFinal]}@aiesec.org.br`;
 
                     // Verifica se o e-mail já existe
-                    existe = await buscarDados(url, email);
+                    existe = await buscarUsuario(url, email);
                     if (existe && Object.keys(existe).length === 1) {
                         // Esconde o spinner e retorna o e-mail gerado
                         esconderSpinner();
@@ -545,7 +643,7 @@ async function gerarEmail(nome, sobrenome, erroNome, erroSobrenome, url) {
             erroNome.textContent = "Já existe um e-mail gerado com esses nomes.";
             erroSobrenome.textContent = "Já existe um e-mail gerado com esses sobrenomes.";
             esconderSpinner();  // Esconde o spinner depois de tudo
-            return false;
+            return "";
         }
     } else {
         // Esconde o spinner
@@ -565,7 +663,7 @@ async function gerarEmail(nome, sobrenome, erroNome, erroSobrenome, url) {
  * 
  * @throws {Error} Lança um erro caso a requisição falhe ou a resposta não seja bem-sucedida.
  */
-async function buscarDados(url, email) {
+async function buscarUsuario(url, email) {
     // Criando um objeto com o e-mail para enviar na requisição
     const dados = { email: email };
 
@@ -587,6 +685,36 @@ async function buscarDados(url, email) {
 
         // Parseando a resposta para JSON e retornando os dados
         const data = await response.json();
+        console.log(data)
+        return data;
+
+    } catch (error) {
+        // Tratando os erros, caso algo dê errado
+        console.error("Erro ao buscar dados:", error.message);
+        return null; // Retorna null em caso de erro
+    }
+}
+
+async function inserirUsuarios(url,dados) {
+    try {
+        // Utilizando fetch para fazer a requisição POST
+        const response = await fetch(url, {
+            method: 'POST', // Método HTTP
+            headers: {
+                'Content-Type': 'application/json', // Definindo o tipo de conteúdo como JSON
+            },
+            body: JSON.stringify(dados) // Convertendo o objeto 'dados' para uma string JSON
+        });
+
+        // Verificando se a resposta foi bem-sucedida
+        if (!response.ok) {
+            // Se a resposta não for 2xx, lança um erro
+            throw new Error(`Falha: ${response.status} - ${response.statusText}`);
+        }
+
+        // Parseando a resposta para JSON e retornando os dados
+        const data = await response.json();
+        console.log(data)
         return data;
 
     } catch (error) {

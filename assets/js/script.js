@@ -23,10 +23,10 @@ const sobrenome = document.querySelector('#sobrenome');
 const senha = document.querySelector("#senha");
 const olhoAberto = document.querySelector("#mostrarSenha");
 const olhoFechado = document.querySelector("#esconderSenha");
-
+const urlBase = "https://kaigabriel12.pythonanywhere.com";
 //Url Globais
-const urlBuscarUsuarios = "https://kaigabriel12.pythonanywhere.com/proxy";
-const inserirUsuarios = "";
+const urlBuscarUsuarios = `${urlBase}/buscarUsuario`;
+const urlInserirUsuario = `${urlBase}/inserirUsuario`;
 
 /**
  * Seleciona o ícone de ajuda referente ao e-mail secundário.
@@ -180,7 +180,7 @@ fotoInput.addEventListener('change', () => {
  * Restaura a imagem padrão ao clicar no botão de reset do formulário.
  */
 form.addEventListener("reset", () => {
-  setTimeout(() => limpar(previewFoto), 0);
+  setTimeout(() => limpar(previewFoto, nome, sobrenome, senha, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha), 0);
 });
 
 telefone.addEventListener('input', () => validarTelefone(telefone, erroTelefone));
@@ -199,58 +199,36 @@ form.addEventListener('submit', async function (event) {
   event.preventDefault();
 
   const dados = {
-    nome: document.getElementById("nome").value,
-    sobrenome: document.getElementById("sobrenome").value,
-    senha: document.getElementById('senha').value,
-    emailGerado: await gerarEmail(nome, sobrenome, erroNome, erroSobrenome, urlBuscarUsuarios),
-    emailPessoal: document.getElementById("email_sec").value,
-    telefone: document.getElementById('telefone').value,
-    foto: previewFoto.src // já pega a preview atual
+    "nome": formatarNome(nome.value),
+    "sobrenome": formatarNome(sobrenome.value),
+    "senha": senha.value,
+    "emailGerado": await gerarEmail(nome, sobrenome, erroNome, erroSobrenome, urlBuscarUsuarios),
+    "emailPessoal": emailSecundario.value,
+    "telefone": telefone.value,
+    "foto": previewFoto.src === logo ? "" : await dadosImagem(fotoInput)// já pega a preview atual
   };
+  console.log(dados)
+  //Validação dos campos obrigatórios
+  const nomeValido = validarTexto(nome, erroNome, 'nome');
+  const sobrenomeValido = validarTexto(sobrenome, erroSobrenome, 'sobrenome');
+  const senhaValida = validarSenha(senha, erroSenha);
+
+  if (!nomeValido || !sobrenomeValido || !senhaValida) {
+    criarModalPopUp("Atenção", "Campo Obrigatório não preenchido:\n-nome\n-sobrenome\n-senha", logo)
+    return;
+  }
   // 🔹 Aguardando o email ser gerado
   if (dados.emailGerado) {
     // 🔹 Abre modal de confirmação
     criarModalConfirmacao(dados, async () => {
       // 🔹 Só mostra spinner DEPOIS da confirmação
       mostrarSpinner();
-      // Validação dos campos obrigatórios
-      // const nomeValido = validarTexto(nome, erroNome, 'nome');
-      // const sobrenomeValido = validarTexto(sobrenome, erroSobrenome, 'sobrenome');
-      // const senhaValida = validarSenha(senha, erroSenha);
-
-      // if (!nomeValido || !sobrenomeValido || !senhaValida) {
-      //   await new Promise(resolve => setTimeout(resolve, 2000));
-      //   alert("Verifique os campos antes de enviar.");
-      //   esconderSpinner();
-      //   return;
-      // }
-
-      const inputNome = nome.value.toLowerCase().trim();
-      const inputSobrenome = sobrenome.value.toLowerCase().trim();
-
-
+      await inserirUsuarios(urlInserirUsuario, dados)
       esconderSpinner();
       // Aguarda o spinner fechar e então gera o TXT
       esperarESpinnerFechar(dados);
-      console.log("Nome: ", nome.value);
-      console.log("Sobrenome: ", sobrenome.value);
-      console.log("Email pessoal: ", emailSecundario.value);
-      console.log("Senha: ", senha.value);
-
-      if (fotoInput.files.length > 0) {
-        const file = fotoInput.files[0];
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const base64 = e.target.result;
-          console.log("Imagem Base64: ", base64);
-          console.log("Tipo: ", file.type);
-        };
-        reader.readAsDataURL(file);
-      } else {
-        console.log("Nenhuma imagem selecionada");
-      }
-
       form.reset();
+      limpar(previewFoto, nome, sobrenome, senha, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha);
     }, logo);
   }
 });
