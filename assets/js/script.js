@@ -198,6 +198,17 @@ telefone.addEventListener('input', () => validarTelefone(telefone, erroTelefone)
 form.addEventListener('submit', async function (event) {
   event.preventDefault();
 
+
+  //Validação dos campos obrigatórios
+  const nomeValido = validarTexto(nome, erroNome, 'nome');
+  const sobrenomeValido = validarTexto(sobrenome, erroSobrenome, 'sobrenome');
+  const senhaValida = validarSenha(senha, erroSenha);
+
+  if (!nomeValido || !sobrenomeValido || !senhaValida) {
+    criarModalPopUp("Atenção", "Campo Obrigatório não preenchido:\n-nome\n-sobrenome\n-senha", logo)
+    return;
+  }
+
   const dados = {
     "nome": formatarNome(nome.value),
     "sobrenome": formatarNome(sobrenome.value),
@@ -208,15 +219,6 @@ form.addEventListener('submit', async function (event) {
     "foto": previewFoto.src === logo ? "" : await dadosImagem(fotoInput)// já pega a preview atual
   };
   console.log(dados)
-  //Validação dos campos obrigatórios
-  const nomeValido = validarTexto(nome, erroNome, 'nome');
-  const sobrenomeValido = validarTexto(sobrenome, erroSobrenome, 'sobrenome');
-  const senhaValida = validarSenha(senha, erroSenha);
-
-  if (!nomeValido || !sobrenomeValido || !senhaValida) {
-    criarModalPopUp("Atenção", "Campo Obrigatório não preenchido:\n-nome\n-sobrenome\n-senha", logo)
-    return;
-  }
   // 🔹 Aguardando o email ser gerado
   if (dados.emailGerado) {
     // 🔹 Abre modal de confirmação

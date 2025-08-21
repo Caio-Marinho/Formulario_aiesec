@@ -617,6 +617,12 @@ async function gerarEmail(nome, sobrenome, erroNome, erroSobrenome, url) {
             erroNome.textContent = "Já existe um e-mail gerado com esse nome.";
             erroSobrenome.textContent = "Já existe um e-mail gerado com esse sobrenome.";
             esconderSpinner();  // Esconde o spinner depois de tudo
+           // Volta a página para o topo
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth' // remove se quiser instantâneo
+    });
             return "";
         } else {
             // Loop para testar diferentes combinações de primeiro nome e sobrenome
@@ -643,6 +649,12 @@ async function gerarEmail(nome, sobrenome, erroNome, erroSobrenome, url) {
             erroNome.textContent = "Já existe um e-mail gerado com esses nomes.";
             erroSobrenome.textContent = "Já existe um e-mail gerado com esses sobrenomes.";
             esconderSpinner();  // Esconde o spinner depois de tudo
+            // Volta a página para o topo
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth' // remove se quiser instantâneo
+    });
             return "";
         }
     } else {
