@@ -209,7 +209,7 @@ async function validarTexto(input, erroElemento, tipo) {
         if (input.value === "") {
             await sleep(2000);
             input.classList.remove('valid', 'invalid');
-            erroElemento.textContent = `Informe seu ${tipo}`;
+            erroElemento.textContent = `Informe seu ${tipo}(se tiver 2 ou 3 também informar)`;
         }
     }
 }
@@ -481,7 +481,6 @@ function limparPalavras(nomeCompleto) {
 
     // Filtra palavras que não são conectores nem vogais soltas
     palavras = palavras.filter(p => !conectores.includes(p) && !vogaisSoltas.includes(p));
-
     return palavras;
 }
 
@@ -492,32 +491,107 @@ function limparPalavras(nomeCompleto) {
  * @param {string} sobrenome - Sobrenome do usuário.
  * @returns {Promise<string>} - E-mail único gerado.
  */
-function gerarEmail(nome, sobrenome) {
-    let ultimoSobrenome = limparPalavras(sobrenome);
-    let primeiroNome = limparPalavras(nome)
-    let email = `${primeiroNome[0]}.${ultimoSobrenome.pop()}@aiesec.org.br`
-    return email;
+async function gerarEmail(nome, sobrenome, erroNome, erroSobrenome, url) {
+    // Limpa as palavras do nome e sobrenome
+    let ultimoSobrenome = limparPalavras(sobrenome.value); // Corrigido para acessar .value
+    let primeiroNome = limparPalavras(nome.value); // Corrigido para acessar .value
+
+    // Gera o email com base no primeiro nome e no último sobrenome
+    let email = `${primeiroNome[0]}.${ultimoSobrenome[ultimoSobrenome.length - 1]}@aiesec.org.br`;
+
+    // Exibe o spinner (indicador de carregamento)
+    mostrarSpinner();
+
+    // Chama a função para verificar se o e-mail já existe
+    let existe = await buscarDados(url, email);
+
+    // Verifica se a resposta é um objeto com mais de uma chave (indicando que já existe)
+    if (existe && Object.keys(existe).length > 1) {
+        // Verifica se o nome e sobrenome têm apenas um caractere
+        if (primeiroNome.length === 1 && ultimoSobrenome.length === 1) {
+            // Adiciona classe de erro (invalid) e remove a classe de sucesso (valid)
+            nome.classList.add('invalid');
+            nome.classList.remove('valid');
+            sobrenome.classList.add('invalid');
+            sobrenome.classList.remove('valid');
+
+            // Exibe mensagem de erro
+            erroNome.textContent = "Já existe um e-mail gerado com esse nome.";
+            erroSobrenome.textContent = "Já existe um e-mail gerado com esse sobrenome.";
+            esconderSpinner();  // Esconde o spinner depois de tudo
+            return false;
+        } else {
+            // Loop para testar diferentes combinações de primeiro nome e sobrenome
+            for (let nomeComeco = 0; nomeComeco < primeiroNome.length; nomeComeco++) {  // Corrigido o limite de índice
+                for (let sobrenomeFinal = ultimoSobrenome.length - 1; sobrenomeFinal >= 0; sobrenomeFinal--) {  // Corrigido o limite de índice
+                    email = `${primeiroNome[nomeComeco]}.${ultimoSobrenome[sobrenomeFinal]}@aiesec.org.br`;
+
+                    // Verifica se o e-mail já existe
+                    existe = await buscarDados(url, email);
+                    if (existe && Object.keys(existe).length === 1) {
+                        // Esconde o spinner e retorna o e-mail gerado
+                        esconderSpinner();
+                        return email;
+                    }
+                }
+            }
+
+            // Caso não encontre um e-mail válido, exibe erro
+            nome.classList.add('invalid');
+            nome.classList.remove('valid');
+            sobrenome.classList.add('invalid');
+            sobrenome.classList.remove('valid');
+
+            erroNome.textContent = "Já existe um e-mail gerado com esses nomes.";
+            erroSobrenome.textContent = "Já existe um e-mail gerado com esses sobrenomes.";
+            esconderSpinner();  // Esconde o spinner depois de tudo
+            return false;
+        }
+    } else {
+        // Esconde o spinner
+        esconderSpinner();
+        // Retorna o e-mail gerado se não existir
+        return email;
+    }
 }
 
-
-
+/**
+ * Função para buscar dados através de uma requisição POST.
+ * 
+ * @param {string} url - A URL para a qual a requisição será feita.
+ * @param {string} email - O e-mail que será enviado no corpo da requisição.
+ * 
+ * @returns {Object|null} Retorna os dados da resposta no formato JSON, ou null se ocorrer um erro.
+ * 
+ * @throws {Error} Lança um erro caso a requisição falhe ou a resposta não seja bem-sucedida.
+ */
 async function buscarDados(url, email) {
+    // Criando um objeto com o e-mail para enviar na requisição
     const dados = { email: email };
 
     try {
-        const response = await axios.post(url, dados, {
+        // Utilizando fetch para fazer a requisição POST
+        const response = await fetch(url, {
+            method: 'POST', // Método HTTP
             headers: {
-                'Content-Type': 'application/json'
-            }
+                'Content-Type': 'application/json', // Definindo o tipo de conteúdo como JSON
+            },
+            body: JSON.stringify(dados) // Convertendo o objeto 'dados' para uma string JSON
         });
-        return response.data;
+
+        // Verificando se a resposta foi bem-sucedida
+        if (!response.ok) {
+            // Se a resposta não for 2xx, lança um erro
+            throw new Error(`Falha: ${response.status} - ${response.statusText}`);
+        }
+
+        // Parseando a resposta para JSON e retornando os dados
+        const data = await response.json();
+        return data;
 
     } catch (error) {
-        // Axios encapsula o erro, então você pode pegar o status ou a mensagem
-        if (error.response) {
-            console.error(`Falha: ${error.response.status} - ${error.response.data.erro}`);
-        } else {
-            console.error("Falha:", error.message);
-        }
+        // Tratando os erros, caso algo dê errado
+        console.error("Erro ao buscar dados:", error.message);
+        return null; // Retorna null em caso de erro
     }
 }

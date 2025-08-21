@@ -24,6 +24,10 @@ const senha = document.querySelector("#senha");
 const olhoAberto = document.querySelector("#mostrarSenha");
 const olhoFechado = document.querySelector("#esconderSenha");
 
+//Url Globais
+const urlBuscarUsuarios = "https://kaigabriel12.pythonanywhere.com/proxy";
+const inserirUsuarios = "";
+
 /**
  * Seleciona o ícone de ajuda referente ao e-mail secundário.
  * Define título e texto exibidos dentro do modal de explicação.
@@ -197,57 +201,57 @@ form.addEventListener('submit', async function (event) {
   const dados = {
     nome: document.getElementById("nome").value,
     sobrenome: document.getElementById("sobrenome").value,
-    emailGerado: gerarEmail(dados.nome, dados.sobrenome),
     senha: document.getElementById('senha').value,
+    emailGerado: await gerarEmail(nome, sobrenome, erroNome, erroSobrenome, urlBuscarUsuarios),
     emailPessoal: document.getElementById("email_sec").value,
     telefone: document.getElementById('telefone').value,
     foto: previewFoto.src // já pega a preview atual
   };
-  const urlBuscarUsuarios = "https://kaigabriel12.pythonanywhere.com/proxy";
-  const inserirUsuarios = "";
   // 🔹 Aguardando o email ser gerado
-  // 🔹 Abre modal de confirmação
-  criarModalConfirmacao(dados, async () => {
-    // 🔹 Só mostra spinner DEPOIS da confirmação
-    mostrarSpinner();
+  if (dados.emailGerado) {
+    // 🔹 Abre modal de confirmação
+    criarModalConfirmacao(dados, async () => {
+      // 🔹 Só mostra spinner DEPOIS da confirmação
+      mostrarSpinner();
+      // Validação dos campos obrigatórios
+      // const nomeValido = validarTexto(nome, erroNome, 'nome');
+      // const sobrenomeValido = validarTexto(sobrenome, erroSobrenome, 'sobrenome');
+      // const senhaValida = validarSenha(senha, erroSenha);
 
-    // Validação dos campos obrigatórios
-    const nomeValido = validarTexto(nome, erroNome, 'nome');
-    const sobrenomeValido = validarTexto(sobrenome, erroSobrenome, 'sobrenome');
-    const senhaValida = validarSenha(senha, erroSenha);
+      // if (!nomeValido || !sobrenomeValido || !senhaValida) {
+      //   await new Promise(resolve => setTimeout(resolve, 2000));
+      //   alert("Verifique os campos antes de enviar.");
+      //   esconderSpinner();
+      //   return;
+      // }
 
-    // if (!nomeValido || !sobrenomeValido || !senhaValida) {
-    //   await new Promise(resolve => setTimeout(resolve, 2000));
-    //   alert("Verifique os campos antes de enviar.");
-    //   esconderSpinner();
-    //   return;
-    // }
-
-    const inputNome = nome.value.toLowerCase().trim();
-    const inputSobrenome = sobrenome.value.toLowerCase().trim();
+      const inputNome = nome.value.toLowerCase().trim();
+      const inputSobrenome = sobrenome.value.toLowerCase().trim();
 
 
-    esconderSpinner();
-    // Aguarda o spinner fechar e então gera o TXT
-    esperarESpinnerFechar(dados);
-    console.log("Nome: ", nome.value);
-    console.log("Sobrenome: ", sobrenome.value);
-    console.log("Email pessoal: ", emailSecundario.value);
-    console.log("Senha: ", senha.value);
+      esconderSpinner();
+      // Aguarda o spinner fechar e então gera o TXT
+      esperarESpinnerFechar(dados);
+      console.log("Nome: ", nome.value);
+      console.log("Sobrenome: ", sobrenome.value);
+      console.log("Email pessoal: ", emailSecundario.value);
+      console.log("Senha: ", senha.value);
 
-    if (fotoInput.files.length > 0) {
-      const file = fotoInput.files[0];
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const base64 = e.target.result;
-        console.log("Imagem Base64: ", base64);
-        console.log("Tipo: ", file.type);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      console.log("Nenhuma imagem selecionada");
-    }
+      if (fotoInput.files.length > 0) {
+        const file = fotoInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const base64 = e.target.result;
+          console.log("Imagem Base64: ", base64);
+          console.log("Tipo: ", file.type);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        console.log("Nenhuma imagem selecionada");
+      }
 
-    form.reset();
-  }, logo);
+      form.reset();
+    }, logo);
+  }
 });
+
