@@ -216,7 +216,7 @@ form.addEventListener('submit', async function (event) {
     emailGerado: await gerarEmail(nome, sobrenome, erroNome, erroSobrenome, urlBuscarUsuarios),
     emailPessoal: emailSecundario.value,
     telefone: telefone.value,
-    foto: previewFoto.src === logo ? "" : await dadosImagem(fotoInput)// já pega a preview atual
+    foto: previewFoto.src === logo ? { base64: "", tipo: "" } : await dadosImagem(fotoInput)// já pega a preview atual
   };
   console.log(dados)
   // 🔹 Aguardando o email ser gerado
