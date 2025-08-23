@@ -367,7 +367,7 @@ input.invalid {
   background-color: #6E6E6E;
   /* cinza */
   color: white;
-  padding: 0.5rem 1rem;
+  padding: 1rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -387,7 +387,7 @@ input.invalid {
 /* Body branco */
 .modal-body {
   background-color: #037EF3;
-  padding: 1rem;
+  padding: 2rem;
   color: white;
 }
 
@@ -410,8 +410,8 @@ input.invalid {
   height: 30px;
   border-radius: 50%;
   position: absolute;
-  top: 25%;
-  right: 10px;
+  top: 28%;
+  right: 5%;
   object-fit: cover;
   z-index: 10;
 }

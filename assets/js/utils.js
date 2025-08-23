@@ -56,10 +56,6 @@ function criarModalPopUp(titulo, mensagem, urlLogo) {
         modalBody.appendChild(p);
     });
 
-    // ------------------- Rodapé (Footer) ------------------- //
-    const modalFooter = document.createElement('div');
-    modalFooter.classList.add('modal-footer');
-
     // ------------------- Logo ------------------- //
     if (urlLogo) {
         // Se a URL da logo for fornecida, cria o elemento da imagem
@@ -67,8 +63,12 @@ function criarModalPopUp(titulo, mensagem, urlLogo) {
         imgLogo.src = urlLogo;
         imgLogo.alt = "Logo";
         imgLogo.classList.add('modal-logo');
-        modalBox.appendChild(imgLogo);
+        modalBody.appendChild(imgLogo);
     }
+
+    // ------------------- Rodapé (Footer) ------------------- //
+    const modalFooter = document.createElement('div');
+    modalFooter.classList.add('modal-footer');
 
     // ------------------- Eventos ------------------- //
     // Evento para fechar o modal ao clicar no botão de fechar
@@ -219,20 +219,24 @@ function criarModalConfirmacao(dados, onConfirm, urlLogo) {
  * @nota Segurança: Remove caracteres especiais para prevenir injeção.
  */
 async function validarCodigoMembresia(input,erroElemento){
-    input.value = input.value.replace(/[0-9]/g,'');
+    input.value = input.value.replace(/[^0-9\s]/g,'');
     const regex = /^[0-9\s]+$/;
-    if (regex.test(input.value) && input.value.length === 5){
+    if (regex.test(input.value) && input.value.length === 5 && input.value !== ""){
         input.classList.add('valid');
         input.classList.remove('invalid');
         erroElemento.textContent = " ";
+        return true
     } else {
         input.classList.add('invalid');
         input.classList.remove('valid');
         erroElemento.textContent = "O codigo de membresia deve conter 5 digitos";
         if (input.value === ""){
+            await sleep(2000);
             input.classList.remove('valid','invalid');
             erroElemento.textContent = "Informe seu codigo de Membresia";
+            return false
         }
+        return false
     }
 }
 
@@ -260,6 +264,7 @@ async function validarTexto(input, erroElemento, tipo) {
             await sleep(2000);
             input.classList.remove('valid', 'invalid');
             erroElemento.textContent = `Informe seu ${tipo}(se tiver 2 ou 3 também informar)`;
+            return false
         }
         return false
     }
@@ -290,11 +295,15 @@ function validarSenha(input, erros) {
     }
 
     const allOk = minimo && minusculo && maiusculo && caracterEspecial;
+    const resultado = {
+        codicao : allOk,
+        mensagem : valor === "" ? "" : "Uma ou mais das condições da senha não foi atendida"
+    }
     input.classList.toggle('valid', allOk);
     input.classList.toggle('invalid', !allOk);
     if (valor === "") input.classList.remove('invalid');
 
-    return allOk;
+    return resultado;
 }
 
 /**

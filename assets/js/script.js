@@ -208,20 +208,22 @@ telefone.addEventListener('input', () => validarTelefone(telefone, erroTelefone)
  */
 form.addEventListener('submit', async function (event) {
   event.preventDefault();
-
+  // 🔹 Só mostra spinner DEPOIS da confirmação
+  mostrarSpinner();
 
   //Validação dos campos obrigatórios
-  const nomeValido = validarTexto(nome, erroNome, 'nome');
-  const sobrenomeValido = validarTexto(sobrenome, erroSobrenome, 'sobrenome');
+  const nomeValido = await validarTexto(nome, erroNome, 'nome');
+  const sobrenomeValido = await validarTexto(sobrenome, erroSobrenome, 'sobrenome');
   const senhaValida = validarSenha(senha, erroSenha);
-  const codigoValido = validarCodigoMembresia(codigoMembresia,erroCodigo);
+  const codigoValido = await validarCodigoMembresia(codigoMembresia,erroCodigo);
 
   if (!nomeValido || !sobrenomeValido || !senhaValida || !codigoValido) {
-    const nomeOK = `${nomeValido ? "- Nome\n":""}`;
-    const sobrenomeOK = `${sobrenomeValido ? "- Sobrenome\n":""}`; 
-    const senhaOK = `${senhaValida ? "- senha\n" : ""}`;
-    const codigoOK = `${codigoValido ? "- Codigo Membresia": ""}`
-    criarModalPopUp("Atenção", `Campo Obrigatório não preenchido:\n${nomeOK}${sobrenomeOK}${senhaOK}${codigoOK}`, logo)
+    const nomeOK = nomeValido ? "":"- Nome\n";
+    const sobrenomeOK = sobrenomeValido ? "":"- Sobrenome\n"; 
+    const senhaOK = senhaValida.codicao ? "" : `- senha(${senhaValida.mensagem})\n`;
+    const codigoOK = codigoValido ? "": "- Codigo Membresia."
+    esconderSpinner();
+    criarModalPopUp("Atenção", `Campo Obrigatório não preenchidos ou incorreto:\n${nomeOK}${sobrenomeOK}${senhaOK}${codigoOK}`, logo)
     return;
   }
 
@@ -232,15 +234,14 @@ form.addEventListener('submit', async function (event) {
     emailGerado: await gerarEmail(nome, sobrenome, erroNome, erroSobrenome, urlBuscarUsuarios),
     emailPessoal: emailSecundario.value,
     telefone: telefone.value,
-    foto: previewFoto.src === logo ? { base64: "", tipo: "" } : await dadosImagem(fotoInput)// já pega a preview atual
+    foto: previewFoto.src === logo ? { base64: "", tipo: "" } : await dadosImagem(fotoInput),// já pega a preview atual
+    codigo : codigoMembresia.value
   };
   console.log(dados)
   // 🔹 Aguardando o email ser gerado
   if (dados.emailGerado) {
     // 🔹 Abre modal de confirmação
     criarModalConfirmacao(dados, async () => {
-      // 🔹 Só mostra spinner DEPOIS da confirmação
-      mostrarSpinner();
       await inserirUsuarios(urlInserirUsuario, dados)
       esconderSpinner();
       // Aguarda o spinner fechar e então gera o TXT
