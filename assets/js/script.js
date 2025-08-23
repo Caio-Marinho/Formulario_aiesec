@@ -216,14 +216,18 @@ form.addEventListener('submit', async function (event) {
   const sobrenomeValido = await validarTexto(sobrenome, erroSobrenome, 'sobrenome');
   const senhaValida = validarSenha(senha, erroSenha);
   const codigoValido = await validarCodigoMembresia(codigoMembresia,erroCodigo);
+  const emailSecValido = validarEmailSecundario(emailSecundario.value.trim());
+  const telefoneValido = validarTelefone(telefone,erroTelefone);
+  const nomeOK = nomeValido ? "":"- Nome\n";
+  const sobrenomeOK = sobrenomeValido ? "":"- Sobrenome\n"; 
+  const senhaOK = senhaValida.codicao ? "" : `- senha(${senhaValida.mensagem})\n`;
+  const codigoOK = codigoValido ? "": "- Codigo Membresia\n";
+  const emailSecOK = emailSecValido ? "": "- Email Pessoal\n";
+  const telefoneOK = telefoneValido ? "": "- Telfone"
 
-  if (!nomeValido || !sobrenomeValido || !senhaValida || !codigoValido) {
-    const nomeOK = nomeValido ? "":"- Nome\n";
-    const sobrenomeOK = sobrenomeValido ? "":"- Sobrenome\n"; 
-    const senhaOK = senhaValida.codicao ? "" : `- senha(${senhaValida.mensagem})\n`;
-    const codigoOK = codigoValido ? "": "- Codigo Membresia."
+  if (!nomeValido || !sobrenomeValido || !senhaValida || !codigoValido || !emailSecValido || !telefoneValido) {
     esconderSpinner();
-    criarModalPopUp("Atenção", `Campo Obrigatório não preenchidos ou incorreto:\n${nomeOK}${sobrenomeOK}${senhaOK}${codigoOK}`, logo)
+    criarModalPopUp("Atenção", `Campo Obrigatório não preenchidos ou campo incorreto incorreto:\n${nomeOK}${sobrenomeOK}${senhaOK}${codigoOK}${emailSecOK}${telefoneOK}`, logo)
     return;
   }
 
@@ -232,7 +236,7 @@ form.addEventListener('submit', async function (event) {
     sobrenome: formatarNome(sobrenome.value),
     senha: senha.value,
     emailGerado: await gerarEmail(nome, sobrenome, erroNome, erroSobrenome, urlBuscarUsuarios),
-    emailPessoal: emailSecundario.value,
+    emailPessoal: emailSecundario.value.trim(),
     telefone: telefone.value,
     foto: previewFoto.src === logo ? { base64: "", tipo: "" } : await dadosImagem(fotoInput),// já pega a preview atual
     codigo : codigoMembresia.value

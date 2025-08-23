@@ -327,9 +327,13 @@ function toggleSenha(input, mostrar, olhoAberto, olhoFechado) {
 function validarEmailSecundario(email) {
     const dominiosPermitidos = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com'];
     const regexEmail = /^[\w.-]+@([\w-]+\.)+[\w-]{2,4}$/;
-    if (!regexEmail.test(email)) return false;
-    const dominio = email.split('@')[1].toLowerCase();
-    return dominiosPermitidos.includes(dominio);
+    if (email !== ""){
+        if (!regexEmail.test(email)) return false;
+            const dominio = email.split('@')[1].toLowerCase();
+            return dominiosPermitidos.includes(dominio);
+    } else {
+        return true;
+    }
 }
 
 /**
@@ -357,6 +361,7 @@ async function validarTelefone(input, erroElemento) {
             await sleep(2000);
             input.classList.remove('valid', 'invalid');
             erroElemento.textContent = 'Informe seu telefone';
+            return true;
         }
         return false;
     }
