@@ -23,8 +23,13 @@ const sobrenome = document.querySelector('#sobrenome');
 const senha = document.querySelector("#senha");
 const olhoAberto = document.querySelector("#mostrarSenha");
 const olhoFechado = document.querySelector("#esconderSenha");
+
+//Codigo de Membresia
+const codigoMembresia = document.querySelector("#codigo");
+
+//Url Base
 const urlBase = "https://kaigabriel12.pythonanywhere.com";
-//Url Globais
+//Url com rotas
 const urlBuscarUsuarios = `${urlBase}/buscarUsuario`;
 const urlInserirUsuario = `${urlBase}/inserirUsuario`;
 
@@ -66,6 +71,9 @@ const erroSenha = [
   document.querySelector('#erro_senha4')
 ];
 
+//erro do codio
+const erroCodigo = document.querySelector("#erro_codigo")
+
 /**
  * Seleciona o campo de e-mail secundário e os elementos que exibem
  * a lista de domínios de e-mail permitidos.
@@ -102,6 +110,7 @@ const logo = "./assets/img/Logo-Aiesec.png";
 erroNome.textContent = "Informe seu nome(se tiver 2 ou 3 também informar)";
 erroSobrenome.textContent = "Informe seu Sobrenome(se tiver 2 ou 3 também informar)";
 erroTelefone.textContent = "Informe seu telefone";
+erroCodigo.textContent = "Informe seu codigo de membresia"
 emailsValidos[0].textContent = "E-mails válidos:";
 emailsValidos[1].textContent = "- @gmail.com";
 emailsValidos[2].textContent = "- @hotmail.com";
@@ -126,6 +135,8 @@ sobrenome.addEventListener('input', () => validarTexto(sobrenome, erroSobrenome,
  * Valida a senha conforme o usuário digita.
  */
 senha.addEventListener('input', () => validarSenha(senha, erroSenha));
+
+codigoMembresia.addEventListener('input',() => validarCodigoMembresia(codigoMembresia,erroCodigo));
 
 /**
  * Alterna a visibilidade da senha (mostrar/ocultar) ao clicar nos ícones.
@@ -203,9 +214,14 @@ form.addEventListener('submit', async function (event) {
   const nomeValido = validarTexto(nome, erroNome, 'nome');
   const sobrenomeValido = validarTexto(sobrenome, erroSobrenome, 'sobrenome');
   const senhaValida = validarSenha(senha, erroSenha);
+  const codigoValido = validarCodigoMembresia(codigoMembresia,erroCodigo);
 
-  if (!nomeValido || !sobrenomeValido || !senhaValida) {
-    criarModalPopUp("Atenção", "Campo Obrigatório não preenchido:\n-nome\n-sobrenome\n-senha", logo)
+  if (!nomeValido || !sobrenomeValido || !senhaValida || !codigoValido) {
+    const nomeOK = `${nomeValido ? "- Nome\n":""}`;
+    const sobrenomeOK = `${sobrenomeValido ? "- Sobrenome\n":""}`; 
+    const senhaOK = `${senhaValida ? "- senha\n" : ""}`;
+    const codigoOK = `${codigoValido ? "- Codigo Membresia": ""}`
+    criarModalPopUp("Atenção", `Campo Obrigatório não preenchido:\n${nomeOK}${sobrenomeOK}${senhaOK}${codigoOK}`, logo)
     return;
   }
 

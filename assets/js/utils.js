@@ -211,7 +211,30 @@ function criarModalConfirmacao(dados, onConfirm, urlLogo) {
     // Adiciona o modal ao corpo do documento
     document.body.appendChild(modalOverlay);
 }
-
+/**
+ * Validar o campo de codigo de membresia
+ * Remove carcteres invalidos e atualiza estado visual e mensagem de erro
+ * @param {HTMLInputElement} input - Input de texto.
+ * @param {HTMLElement} erroElemento - Elemento para exibir mensagens de erro.
+ * @nota Segurança: Remove caracteres especiais para prevenir injeção.
+ */
+async function validarCodigoMembresia(input,erroElemento){
+    input.value = input.value.replace(/[0-9]/g,'');
+    const regex = /^[0-9\s]+$/;
+    if (regex.test(input.value) && input.value.length === 5){
+        input.classList.add('valid');
+        input.classList.remove('invalid');
+        erroElemento.textContent = " ";
+    } else {
+        input.classList.add('invalid');
+        input.classList.remove('valid');
+        erroElemento.textContent = "O codigo de membresia deve conter 5 digitos";
+        if (input.value === ""){
+            input.classList.remove('valid','invalid');
+            erroElemento.textContent = "Informe seu codigo de Membresia";
+        }
+    }
+}
 
 /**
  * Valida um campo de texto (nome ou sobrenome).
