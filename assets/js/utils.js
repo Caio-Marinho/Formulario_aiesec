@@ -489,6 +489,7 @@ function mostrarNotificacao(mensagem, tipo = 'sucesso', duracao = 3000) {
         noti.textContent = `E-mail: ${mensagem} Gerado com Sucesso!`;
     } else if (tipo === 'erro') {
         noti.style.backgroundColor = '#dc3545'; // vermelho
+        noti.textContent = `E-mail: ${mensagem} Não foi possivel ser gerado!`;
     }
 
     container.appendChild(noti);
@@ -655,6 +656,8 @@ async function gerarEmail(nome, sobrenome, erroNome, erroSobrenome, url) {
                 left: 0,
                 behavior: 'smooth' // remove se quiser instantâneo
             });
+            mostrarNotificacao(email,"erro")
+            criarModalPopUp("Erro","Usuario com este email já está cadastrado","./assets/img/Logo-Aiesec.png")
             return "";
         } else {
             // Loop para testar diferentes combinações de primeiro nome e sobrenome
@@ -687,6 +690,8 @@ async function gerarEmail(nome, sobrenome, erroNome, erroSobrenome, url) {
                 left: 0,
                 behavior: 'smooth' // remove se quiser instantâneo
             });
+            mostrarNotificacao("não gerado","erro")
+            criarModalPopUp("Erro","Usuario com este email já está cadastrado","./assets/img/Logo-Aiesec.png")
             return "";
         }
     } else {
@@ -729,7 +734,6 @@ async function buscarUsuario(url, email) {
 
         // Parseando a resposta para JSON e retornando os dados
         const data = await response.json();
-        console.log(data)
         return data;
 
     } catch (error) {
@@ -758,9 +762,14 @@ async function inserirUsuarios(url, dados) {
 
         // Parseando a resposta para JSON e retornando os dados
         const data = await response.json();
-        console.log(data)
-        return data;
-
+        if (Object.keys(data).length > 2){
+            esconderSpinner();
+            // Aguarda o spinner fechar e então gera o TXT
+            return esperarESpinnerFechar(dados);
+        } else {
+            esconderSpinner();
+             return criarModalPopUp("Falha",data.message,"./assets/img/Logo-Aiesec.png");
+        }
     } catch (error) {
         // Tratando os erros, caso algo dê errado
         console.error("Erro ao buscar dados:", error.message);

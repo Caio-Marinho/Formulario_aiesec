@@ -237,15 +237,13 @@ form.addEventListener('submit', async function (event) {
     foto: previewFoto.src === logo ? { base64: "", tipo: "" } : await dadosImagem(fotoInput),// já pega a preview atual
     codigo : codigoMembresia.value
   };
-  console.log(dados)
   // 🔹 Aguardando o email ser gerado
   if (dados.emailGerado) {
     // 🔹 Abre modal de confirmação
     criarModalConfirmacao(dados, async () => {
+      // 🔹 Só mostra spinner DEPOIS da confirmação
+      mostrarSpinner();
       await inserirUsuarios(urlInserirUsuario, dados)
-      esconderSpinner();
-      // Aguarda o spinner fechar e então gera o TXT
-      esperarESpinnerFechar(dados);
       form.reset();
       limpar(previewFoto, nome, sobrenome, senha, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha);
     }, logo);
