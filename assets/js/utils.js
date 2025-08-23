@@ -446,13 +446,13 @@ async function downloadCredenciais(dados, tipo = "sucesso", duracao = 2500) {
 async function esperarESpinnerFechar(dados) {
     // Aguarda enquanto o spinner estiver visível
     while (document.getElementById('spinner').style.display !== 'none') {
-        await sleep(100); // checa a cada 100ms
+        await sleep(500); // checa a cada 500ms ou 0,5s
     }
 
-    if (dados.emailPessoal === "") {
-        // Depois que o spinner desaparecer, faz o download
-        downloadCredenciais(dados);
-    }
+   
+    // Depois que o spinner desaparecer, faz o download
+    downloadCredenciais(dados);
+    
 }
 
 /**
