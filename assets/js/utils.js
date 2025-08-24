@@ -347,7 +347,7 @@ async function validarTelefone(input, erroElemento) {
 
     input.value = formatarTelefone(input)
     // Regex: DDD (2 dígitos) + 9 + 4 ou 5 dígitos + 4 dígitos
-    const regex = /^0?\(\d{2}\)\s?9\d{4}-\d{4}$/;
+    const regex = /^\(?[1-9]{2}\)\s?9\d{4}-\d{4}$/;
     if (regex.test(input.value)) {
         input.classList.add('valid');
         input.classList.remove('invalid');
@@ -374,7 +374,7 @@ async function validarTelefone(input, erroElemento) {
  */
 function formatarTelefone(input) {
     // Remove tudo que não for número
-    const valor = input.value.replace(/\D/g, '');
+    let valor = input.value.replace(/\D/g, '');
 
     // Limita a 11 dígitos
     if (valor.length > 11) valor = valor.slice(0, 11);
@@ -390,7 +390,7 @@ function formatarTelefone(input) {
 }
 
 function normalizarTelefone(numero){
-    let apenasNumeros = numero.replace(/\D/g,"");
+    let apenasNumeros = numero.value.replace(/\D/g,"");
 
     if(apenasNumeros.startsWith("0")){
         apenasNumeros = apenasNumeros.substring(1);
@@ -562,9 +562,10 @@ function previewImagem(fotoInput, previewFoto, erroFoto) {
  * Usada no reset do formulário.
  * @param {HTMLImageElement} preview - Elemento de preview da foto.
  */
-function limpar(preview, nome, sobrenome, senha, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha) {
+function limpar(preview, nome, sobrenome, senha, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigo,erroCodigo) {
     preview.src = "./assets/img/azulAiesec.png";
     nome.classList.remove('invalid', 'valid');
+    codigo.classList.remove('invalid', 'valid');
     sobrenome.classList.remove('invalid', 'valid');
     senha.classList.remove('invalid', 'valid');
     emailSecundario.classList.remove('invalid', 'valid');
@@ -572,6 +573,7 @@ function limpar(preview, nome, sobrenome, senha, emailSecundario, telefone, erro
     erroNome.textContent = "Informe seu nome(se tiver 2 ou 3 também informar)";
     erroSobrenome.textContent = "Informe seu Sobrenome(se tiver 2 ou 3 também informar)";
     erroTelefone.textContent = "Informe seu telefone";
+    erroCodigo.textContent = "Informe seu codigo de membresia";
     erroSenha[0].style.color = "black";
     erroSenha[1].style.color = "black";
     erroSenha[2].style.color = "black";

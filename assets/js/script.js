@@ -192,7 +192,7 @@ fotoInput.addEventListener('change', () => {
  * Restaura a imagem padrão ao clicar no botão de reset do formulário.
  */
 form.addEventListener("reset", () => {
-  setTimeout(() => limpar(previewFoto, nome, sobrenome, senha, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha), 0);
+  setTimeout(() => limpar(previewFoto, nome, sobrenome, senha, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigoMembresia,erroCodigo), 0);
 });
 
 telefone.addEventListener('input', () => validarTelefone(telefone, erroTelefone));
@@ -218,14 +218,14 @@ form.addEventListener('submit', async function (event) {
   const senhaValida = validarSenha(senha, erroSenha);
   const codigoValido = await validarCodigoMembresia(codigoMembresia,erroCodigo);
   const emailSecValido = validarEmailSecundario(emailSecundario.value.trim());
-  const telefoneValido = validarTelefone(telefone,erroTelefone);
+  const telefoneValido = await validarTelefone(telefone,erroTelefone);
   const nomeOK = nomeValido ? "":"- Nome\n";
   const sobrenomeOK = sobrenomeValido ? "":"- Sobrenome\n"; 
   const senhaOK = senhaValida.codicao ? "" : `- senha(${senhaValida.mensagem})\n`;
   const codigoOK = codigoValido ? "": "- Codigo Membresia\n";
   const emailSecOK = emailSecValido ? "": "- Email Pessoal\n";
-  const telefoneOK = telefoneValido ? "": "- Telfone"
-
+  const telefoneOK = telefoneValido ? "": "- Telefone"
+  
   if (!nomeValido || !sobrenomeValido || !senhaValida || !codigoValido || !emailSecValido || !telefoneValido) {
     esconderSpinner();
     criarModalPopUp("Atenção", `Campo Obrigatório não preenchidos ou campo incorreto incorreto:\n${nomeOK}${sobrenomeOK}${senhaOK}${codigoOK}${emailSecOK}${telefoneOK}`, logo)
@@ -238,10 +238,11 @@ form.addEventListener('submit', async function (event) {
     senha: senha.value,
     emailGerado: await gerarEmail(nome, sobrenome, erroNome, erroSobrenome, urlBuscarUsuarios),
     emailPessoal: emailSecundario.value.trim(),
-    telefone: normalizarTelefone(telefone.value),
-    foto: previewFoto.src === logo ? { base64: "", tipo: "" } : await dadosImagem(fotoInput),// já pega a preview atual
+    telefone: telefone.value === ""?"":normalizarTelefone(telefone),
+    foto: previewFoto.src === "./assets/img/azulAiesec.png" ? { base64: "", tipo: "" } : await dadosImagem(fotoInput),// já pega a preview atual
     codigo : codigoMembresia.value
   };
+  console.log(dados.foto)
   // 🔹 Aguardando o email ser gerado
   if (dados.emailGerado) {
     // 🔹 Abre modal de confirmação
@@ -250,7 +251,7 @@ form.addEventListener('submit', async function (event) {
       mostrarSpinner();
       await inserirUsuarios(urlInserirUsuario, dados)
       form.reset();
-      limpar(previewFoto, nome, sobrenome, senha, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha);
+      limpar(previewFoto, nome, sobrenome, senha, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigoMembresia,erroCodigo);
     }, logo);
   }
 });
