@@ -543,7 +543,7 @@ function previewImagem(fotoInput, previewFoto, erroFoto) {
         };
         reader.readAsDataURL(file);
     } else {
-        previewFoto.src = "./assets/img/user.png"; // reseta
+        previewFoto.src = ""; // reseta
         erroFoto.textContent = '';
     }
 }
