@@ -389,6 +389,15 @@ function formatarTelefone(input) {
     return resultado;
 }
 
+function normalizarTelefone(numero){
+    let apenasNumeros = numero.replace(/\D/g,"");
+
+    if(apenasNumeros.startsWith("0")){
+        apenasNumeros = apenasNumeros.substring(1);
+    }
+    return "+55"+apenasNumeros
+}
+
 /**
  * Formata um nome completo, colocando a primeira letra de cada palavra em maiúscula
  * e o restante em minúsculas.
