@@ -533,7 +533,7 @@ function previewImagem(fotoInput, previewFoto, erroFoto) {
         const formatosPermitidos = ['image/jpeg', 'image/jpg', 'image/png'];
         if (!formatosPermitidos.includes(file.type)) {
             erroFoto.textContent = "Apenas arquivos JPGE ,JPG ou PNG são permitidos.";
-            previewFoto.src = "./assets/img/user.png"; // volta para padrão
+            previewFoto.src = "./assets/img/azulAiesec.png"; // volta para padrão
             return;
         }
         erroFoto.textContent = '';
@@ -543,7 +543,7 @@ function previewImagem(fotoInput, previewFoto, erroFoto) {
         };
         reader.readAsDataURL(file);
     } else {
-        previewFoto.src = "./assets/img/user.png"; // reseta
+        previewFoto.src = "./assets/img/azulAiesec.png"; // reseta
         erroFoto.textContent = '';
     }
 }
@@ -554,7 +554,7 @@ function previewImagem(fotoInput, previewFoto, erroFoto) {
  * @param {HTMLImageElement} preview - Elemento de preview da foto.
  */
 function limpar(preview, nome, sobrenome, senha, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha) {
-    preview.src = "./assets/img/user.png";
+    preview.src = "./assets/img/azulAiesec.png";
     nome.classList.remove('invalid', 'valid');
     sobrenome.classList.remove('invalid', 'valid');
     senha.classList.remove('invalid', 'valid');
