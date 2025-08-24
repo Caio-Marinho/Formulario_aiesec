@@ -237,7 +237,7 @@ form.addEventListener('submit', async function (event) {
     senha: senha.value,
     emailGerado: await gerarEmail(nome, sobrenome, erroNome, erroSobrenome, urlBuscarUsuarios),
     emailPessoal: emailSecundario.value.trim(),
-    telefone: telefone.value.replace(/\D/g,""),
+    telefone: `+55${telefone.value.replace(/\D/g,"")}`,
     foto: previewFoto.src === logo ? { base64: "", tipo: "" } : await dadosImagem(fotoInput),// já pega a preview atual
     codigo : codigoMembresia.value
   };
