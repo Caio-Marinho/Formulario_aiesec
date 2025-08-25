@@ -192,7 +192,7 @@ fotoInput.addEventListener('change', () => {
  * Restaura a imagem padrão ao clicar no botão de reset do formulário.
  */
 form.addEventListener("reset", () => {
-  setTimeout(() => limpar(previewFoto, nome, sobrenome, senha, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigoMembresia,erroCodigo), 0);
+  setTimeout(() => limpar(previewFoto, nome, sobrenome, senha,olhoFechado,olhoAberto, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigoMembresia,erroCodigo), 0);
 });
 
 telefone.addEventListener('input', () => validarTelefone(telefone, erroTelefone));
@@ -250,7 +250,7 @@ form.addEventListener('submit', async function (event) {
       mostrarSpinner();
       await inserirUsuarios(urlInserirUsuario, dados)
       form.reset();
-      limpar(previewFoto, nome, sobrenome, senha,olhoFechado, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigoMembresia,erroCodigo);
+      limpar(previewFoto, nome, sobrenome, senha,olhoFechado,olhoAberto, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigoMembresia,erroCodigo);
     }, logo);
   }
 });
