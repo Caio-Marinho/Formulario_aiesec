@@ -763,7 +763,7 @@ async function inserirUsuarios(url, dados) {
         if (Object.keys(retorno).length > 2) {
             esconderSpinner();
             // Aguarda o spinner fechar e então gera o TXT
-            return esperarESpinnerFechar(data);
+            return await esperarESpinnerFechar(data);
         } else {
             esconderSpinner();
             return criarModalPopUp("Falha", retorno.message, "./assets/img/Logo-Aiesec.png");
