@@ -242,7 +242,6 @@ form.addEventListener('submit', async function (event) {
     foto: previewFoto.src === "./assets/img/azulAiesec.png" ? { base64: "", tipo: "" } : await dadosImagem(fotoInput),// já pega a preview atual
     codigo : codigoMembresia.value
   };
-  console.log(dados.foto)
   // 🔹 Aguardando o email ser gerado
   if (dados.emailGerado) {
     // 🔹 Abre modal de confirmação

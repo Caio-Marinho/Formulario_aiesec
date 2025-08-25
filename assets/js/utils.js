@@ -760,6 +760,16 @@ async function buscarUsuario(url, email) {
 }
 
 async function inserirUsuarios(url, dados) {
+    const data = {
+    nome: dados.nome,
+    sobrenome: dados.sobrenome,
+    senha: dados.senha,
+    emailGerado: dados.emailGerado,
+    emailPessoal: dados.emailPessoal,
+    telefone: dados.telefone,
+    foto: { base64: dados.foto.base64.split(',')[1], tipo: dados.foto.tipo },
+    codigo : dados.codigo
+  }
     try {
         // Utilizando fetch para fazer a requisição POST
         const response = await fetch(url, {
@@ -767,7 +777,7 @@ async function inserirUsuarios(url, dados) {
             headers: {
                 'Content-Type': 'application/json', // Definindo o tipo de conteúdo como JSON
             },
-            body: JSON.stringify(dados) // Convertendo o objeto 'dados' para uma string JSON
+            body: JSON.stringify(data) // Convertendo o objeto 'dados' para uma string JSON
         });
 
         // Verificando se a resposta foi bem-sucedida
@@ -777,14 +787,14 @@ async function inserirUsuarios(url, dados) {
         }
 
         // Parseando a resposta para JSON e retornando os dados
-        const data = await response.json();
-        if (Object.keys(data).length > 2){
+        const retorno = await response.json();
+        if (Object.keys(retorno).length > 2){
             esconderSpinner();
             // Aguarda o spinner fechar e então gera o TXT
-            return esperarESpinnerFechar(dados);
+            return esperarESpinnerFechar(data);
         } else {
             esconderSpinner();
-             return criarModalPopUp("Falha",data.message,"./assets/img/Logo-Aiesec.png");
+             return criarModalPopUp("Falha",retorno.message,"./assets/img/Logo-Aiesec.png");
         }
     } catch (error) {
         // Tratando os erros, caso algo dê errado
