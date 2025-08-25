@@ -221,10 +221,10 @@ function criarModalConfirmacao(dados, onConfirm, urlLogo) {
  * @param {HTMLElement} erroElemento - Elemento para exibir mensagens de erro.
  * @nota Segurança: Remove caracteres especiais para prevenir injeção.
  */
-async function validarCodigoMembresia(input,erroElemento){
-    input.value = input.value.replace(/[^0-9\s]/g,'');
+async function validarCodigoMembresia(input, erroElemento) {
+    input.value = input.value.replace(/[^0-9\s]/g, '');
     const regex = /^[0-9\s]+$/;
-    if (regex.test(input.value) && input.value.length === 5 && input.value !== ""){
+    if (regex.test(input.value) && input.value.length === 5 && input.value !== "") {
         input.classList.add('valid');
         input.classList.remove('invalid');
         erroElemento.textContent = " ";
@@ -233,9 +233,9 @@ async function validarCodigoMembresia(input,erroElemento){
         input.classList.add('invalid');
         input.classList.remove('valid');
         erroElemento.textContent = "O codigo de membresia deve conter 5 digitos";
-        if (input.value === ""){
+        if (input.value === "") {
             await sleep(2000);
-            input.classList.remove('valid','invalid');
+            input.classList.remove('valid', 'invalid');
             erroElemento.textContent = "Informe seu codigo de Membresia";
             return false
         }
@@ -299,8 +299,8 @@ function validarSenha(input, erros) {
 
     const allOk = minimo && minusculo && maiusculo && caracterEspecial;
     const resultado = {
-        codicao : allOk,
-        mensagem : valor === "" ? "" : "Uma ou mais das condições da senha não foi atendida"
+        codicao: allOk,
+        mensagem: valor === "" ? "" : "Uma ou mais das condições da senha não foi atendida"
     }
     input.classList.toggle('valid', allOk);
     input.classList.toggle('invalid', !allOk);
@@ -330,10 +330,10 @@ function toggleSenha(input, mostrar, olhoAberto, olhoFechado) {
 function validarEmailSecundario(email) {
     const dominiosPermitidos = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com'];
     const regexEmail = /^[\w.-]+@([\w-]+\.)+[\w-]{2,4}$/;
-    if (email !== ""){
+    if (email !== "") {
         if (!regexEmail.test(email)) return false;
-            const dominio = email.split('@')[1].toLowerCase();
-            return dominiosPermitidos.includes(dominio);
+        const dominio = email.split('@')[1].toLowerCase();
+        return dominiosPermitidos.includes(dominio);
     } else {
         return true;
     }
@@ -392,13 +392,13 @@ function formatarTelefone(input) {
     return resultado;
 }
 
-function normalizarTelefone(numero){
-    let apenasNumeros = numero.value.replace(/\D/g,"");
+function normalizarTelefone(numero) {
+    let apenasNumeros = numero.value.replace(/\D/g, "");
 
-    if(apenasNumeros.startsWith("0")){
+    if (apenasNumeros.startsWith("0")) {
         apenasNumeros = apenasNumeros.substring(1);
     }
-    return "+55"+apenasNumeros
+    return "+55" + apenasNumeros
 }
 
 /**
@@ -461,10 +461,10 @@ async function esperarESpinnerFechar(dados) {
         await sleep(500); // checa a cada 500ms ou 0,5s
     }
 
-   
+
     // Depois que o spinner desaparecer, faz o download
     downloadCredenciais(dados);
-    
+
 }
 
 /**
@@ -565,7 +565,7 @@ function previewImagem(fotoInput, previewFoto, erroFoto) {
  * Usada no reset do formulário.
  * @param {HTMLImageElement} preview - Elemento de preview da foto.
  */
-function limpar(preview, nome, sobrenome, senha,olhoFechado,olhoAberto, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigo,erroCodigo) {
+function limpar(preview, nome, sobrenome, senha, olhoFechado, olhoAberto, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha, codigo, erroCodigo) {
     preview.src = "./assets/img/azulAiesec.png";
     nome.classList.remove('invalid', 'valid');
     codigo.classList.remove('invalid', 'valid');
@@ -647,79 +647,47 @@ async function gerarEmail(nome, sobrenome, erroNome, erroSobrenome, url) {
     const ultimoSobrenome = limparPalavras(sobrenome.value); // Corrigido para acessar .value
     const primeiroNome = limparPalavras(nome.value); // Corrigido para acessar .value
 
-    // Gera o email com base no primeiro nome e no último sobrenome
-    let email = `${primeiroNome[0]}.${ultimoSobrenome[ultimoSobrenome.length - 1]}@aiesec.org.br`;
-
     // Exibe o spinner (indicador de carregamento)
     mostrarSpinner();
 
-    // Chama a função para verificar se o e-mail já existe
-    let existe = await buscarUsuario(url, email);
+    const combinacoes = [];
 
-    // Verifica se a resposta é um objeto com mais de uma chave (indicando que já existe)
-    if (existe && Object.keys(existe).length > 1) {
-        // Verifica se o nome e sobrenome têm apenas um caractere
-        if (primeiroNome.length === 1 && ultimoSobrenome.length === 1) {
-            // Adiciona classe de erro (invalid) e remove a classe de sucesso (valid)
-            nome.classList.add('invalid');
-            nome.classList.remove('valid');
-            sobrenome.classList.add('invalid');
-            sobrenome.classList.remove('valid');
-
-            // Exibe mensagem de erro
-            erroNome.textContent = "Já existe um e-mail gerado com esse nome.";
-            erroSobrenome.textContent = "Já existe um e-mail gerado com esse sobrenome.";
-            esconderSpinner();  // Esconde o spinner depois de tudo
-            // Volta a página para o topo
-            window.scrollTo({
-                top: 0,
-                left: 0,
-                behavior: 'smooth' // remove se quiser instantâneo
-            });
-            mostrarNotificacao(email,"erro")
-            criarModalPopUp("Erro","Usuario com este email já está cadastrado","./assets/img/Logo-Aiesec.png")
-            return "";
-        } else {
-            // Loop para testar diferentes combinações de primeiro nome e sobrenome
-            for (let nomeComeco = 0; nomeComeco < primeiroNome.length; nomeComeco++) {  // Corrigido o limite de índice
-                for (let sobrenomeFinal = ultimoSobrenome.length - 1; sobrenomeFinal >= 0; sobrenomeFinal--) {  // Corrigido o limite de índice
-                    email = `${primeiroNome[nomeComeco]}.${ultimoSobrenome[sobrenomeFinal]}@aiesec.org.br`;
-
-                    // Verifica se o e-mail já existe
-                    existe = await buscarUsuario(url, email);
-                    if (existe && Object.keys(existe).length === 1) {
-                        // Esconde o spinner e retorna o e-mail gerado
-                        esconderSpinner();
-                        return email;
-                    }
-                }
-            }
-
-            // Caso não encontre um e-mail válido, exibe erro
-            nome.classList.add('invalid');
-            nome.classList.remove('valid');
-            sobrenome.classList.add('invalid');
-            sobrenome.classList.remove('valid');
-
-            erroNome.textContent = "Já existe um e-mail gerado com esses nomes.";
-            erroSobrenome.textContent = "Já existe um e-mail gerado com esses sobrenomes.";
-            esconderSpinner();  // Esconde o spinner depois de tudo
-            // Volta a página para o topo
-            window.scrollTo({
-                top: 0,
-                left: 0,
-                behavior: 'smooth' // remove se quiser instantâneo
-            });
-            mostrarNotificacao("não gerado","erro")
-            criarModalPopUp("Erro","Usuario com este email já está cadastrado","./assets/img/Logo-Aiesec.png")
-            return "";
+    for (let nomeComeco = 0; nomeComeco < primeiroNome.length; nomeComeco++) {
+        for (let sobrenomeFinal = ultimoSobrenome.length - 1; sobrenomeFinal >= 0; sobrenomeFinal--) {
+            const emailTeste = `${primeiroNome[nomeComeco]}.${ultimoSobrenome[sobrenomeFinal]}@aiesec.org.br`;
+            combinacoes.push(emailTeste);
         }
-    } else {
-        // Esconde o spinner
-        esconderSpinner();
-        // Retorna o e-mail gerado se não existir
-        return email;
     }
+
+    // Verifica todas as combinações em paralelo
+    const respostas = await Promise.all(combinacoes.map(email => buscarUsuario(url, email)));
+
+    for (let i = 0; i < respostas.length; i++) {
+        const existe = respostas[i];
+        if (existe && Object.keys(existe).length === 1) {
+            esconderSpinner();
+            return combinacoes[i]; // Retorna o primeiro que não existe
+        }
+    }
+    // Adiciona classe de erro (invalid) e remove a classe de sucesso (valid)
+    nome.classList.add('invalid');
+    nome.classList.remove('valid');
+    sobrenome.classList.add('invalid');
+    sobrenome.classList.remove('valid');
+
+    // Exibe mensagem de erro
+    erroNome.textContent = "Já existe um e-mail gerado com esse nome.";
+    erroSobrenome.textContent = "Já existe um e-mail gerado com esse sobrenome.";
+    esconderSpinner();  // Esconde o spinner depois de tudo
+    // Volta a página para o topo
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth' // remove se quiser instantâneo
+    });
+    mostrarNotificacao(email, "erro")
+    return criarModalPopUp("Erro", "Usuario com este email já está cadastrado", "./assets/img/Logo-Aiesec.png")
+
 }
 
 /**
@@ -765,15 +733,15 @@ async function buscarUsuario(url, email) {
 
 async function inserirUsuarios(url, dados) {
     const data = {
-    nome: dados.nome,
-    sobrenome: dados.sobrenome,
-    senha: dados.senha,
-    emailGerado: dados.emailGerado,
-    emailPessoal: dados.emailPessoal,
-    telefone: dados.telefone,
-    foto: { base64: dados.foto.base64.split(',')[1], tipo: dados.foto.tipo },
-    codigo : dados.codigo
-  }
+        nome: dados.nome,
+        sobrenome: dados.sobrenome,
+        senha: dados.senha,
+        emailGerado: dados.emailGerado,
+        emailPessoal: dados.emailPessoal,
+        telefone: dados.telefone,
+        foto: { base64: dados.foto.base64.split(',')[1], tipo: dados.foto.tipo },
+        codigo: dados.codigo
+    }
     try {
         // Utilizando fetch para fazer a requisição POST
         const response = await fetch(url, {
@@ -792,13 +760,13 @@ async function inserirUsuarios(url, dados) {
 
         // Parseando a resposta para JSON e retornando os dados
         const retorno = await response.json();
-        if (Object.keys(retorno).length > 2){
+        if (Object.keys(retorno).length > 2) {
             esconderSpinner();
             // Aguarda o spinner fechar e então gera o TXT
             return esperarESpinnerFechar(data);
         } else {
             esconderSpinner();
-             return criarModalPopUp("Falha",retorno.message,"./assets/img/Logo-Aiesec.png");
+            return criarModalPopUp("Falha", retorno.message, "./assets/img/Logo-Aiesec.png");
         }
     } catch (error) {
         // Tratando os erros, caso algo dê errado
