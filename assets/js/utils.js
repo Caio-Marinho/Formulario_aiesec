@@ -358,7 +358,7 @@ async function validarTelefone(input, erroElemento) {
         input.classList.remove('valid');
         erroElemento.textContent = 'Digite um telefone válido no formato (DDD) 9XXXX-XXXX';
         if (input.value === "") {
-            await sleep(2000);
+            await sleep(500);
             input.classList.remove('valid', 'invalid');
             erroElemento.textContent = 'Informe seu telefone';
             return true;
