@@ -131,6 +131,8 @@ function criarModalConfirmacao(dados, onConfirm, urlLogo) {
         ${dados.emailPessoal ? `<p><strong>Email pessoal:</strong> ${dados.emailPessoal}</p>` : ""}
         ${dados.telefone ? `<p><strong>Telefone:</strong> ${dados.telefone}</p>` : ""}
         ${dados.foto ? `<img src="${dados.foto.base64}" class="imagem_usuario">` : ""}
+        <p>Pode levar um tempo até a inserção de seu dados!</p>
+        <p>Por favor, aguarde!</p>
     `;
 
     // ------------------- Rodapé (Footer) ------------------- //
