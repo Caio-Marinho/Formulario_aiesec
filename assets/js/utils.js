@@ -565,7 +565,7 @@ function previewImagem(fotoInput, previewFoto, erroFoto) {
  * Usada no reset do formulário.
  * @param {HTMLImageElement} preview - Elemento de preview da foto.
  */
-function limpar(preview, nome, sobrenome, senha, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigo,erroCodigo) {
+function limpar(preview, nome, sobrenome, senha,olhoFechado, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigo,erroCodigo) {
     preview.src = "./assets/img/azulAiesec.png";
     nome.classList.remove('invalid', 'valid');
     codigo.classList.remove('invalid', 'valid');
@@ -581,6 +581,7 @@ function limpar(preview, nome, sobrenome, senha, emailSecundario, telefone, erro
     erroSenha[1].style.color = "black";
     erroSenha[2].style.color = "black";
     erroSenha[3].style.color = "black";
+    toggleSenha(senha, false, olhoAberto, olhoFechado)
 }
 
 /**

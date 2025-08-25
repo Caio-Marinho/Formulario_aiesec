@@ -250,7 +250,7 @@ form.addEventListener('submit', async function (event) {
       mostrarSpinner();
       await inserirUsuarios(urlInserirUsuario, dados)
       form.reset();
-      limpar(previewFoto, nome, sobrenome, senha, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigoMembresia,erroCodigo);
+      limpar(previewFoto, nome, sobrenome, senha,olhoFechado, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigoMembresia,erroCodigo);
     }, logo);
   }
 });
