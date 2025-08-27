@@ -440,8 +440,8 @@ function esconderSpinner() {
     document.getElementById('spinner').style.display = 'none';
 }
 
-async function downloadCredenciais(dados, tipo = "sucesso", duracao = 2500) {
-    await sleep(3000)
+async function downloadCredenciais(dados, duracao = 2500) {
+    await sleep(duracao)
     const conteudo = `Email institucional: ${dados.emailGerado}\nSenha: ${dados.senha}`;
     const blob = new Blob([conteudo], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
