@@ -777,7 +777,7 @@ async function inserirUsuarios(url, dados) {
         const retorno = await response.json();
         if (Object.keys(retorno).length > 2) {
             esconderSpinner();
-            mostrarNotificacao(data.emailGerado, tipo, duracao)
+            mostrarNotificacao(data.emailGerado)
         } else {
             esconderSpinner();
             return criarModalPopUp("Falha", retorno.message, "./assets/img/Logo-Aiesec.png");
