@@ -98,7 +98,6 @@ const modalFoto = document.querySelector('#helperIconFoto');
 const tituloModalFoto = "Imagem";
 const textoModalFoto = "Campo não obrigatório\nCaso deseje preencher esse campo, Insira uma imagens nos formatos PNG,JPG ou JPGE.";
 const fotoInput = document.querySelector('#foto');
-const previewFoto = document.querySelector('#user');
 const erroFoto = document.querySelector('#erro_foto');
 const logo = "./assets/img/Logo-Aiesec.png";
 
@@ -185,14 +184,14 @@ emailSecundario.addEventListener('input', () => {
  * Mostra a pré-visualização da foto selecionada no input de arquivo.
  */
 fotoInput.addEventListener('change', () => {
-  previewImagem(fotoInput, previewFoto, erroFoto);
+  previewImagem(fotoInput, erroFoto);
 });
 
 /**
  * Restaura a imagem padrão ao clicar no botão de reset do formulário.
  */
 form.addEventListener("reset", () => {
-  setTimeout(() => limpar(previewFoto, nome, sobrenome, senha,olhoFechado,olhoAberto, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigoMembresia,erroCodigo), 0);
+  setTimeout(() => limpar(nome, sobrenome, senha,olhoFechado,olhoAberto, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigoMembresia,erroCodigo), 0);
 });
 
 telefone.addEventListener('input', () => validarTelefone(telefone, erroTelefone));
@@ -250,7 +249,7 @@ form.addEventListener('submit', async function (event) {
       mostrarSpinner();
       await inserirUsuarios(urlInserirUsuario, dados)
       form.reset();
-      limpar(previewFoto, nome, sobrenome, senha,olhoFechado,olhoAberto, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigoMembresia,erroCodigo);
+      limpar(nome, sobrenome, senha,olhoFechado,olhoAberto, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigoMembresia,erroCodigo);
     }, logo);
   }
 });

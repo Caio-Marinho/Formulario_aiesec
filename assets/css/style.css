@@ -42,6 +42,7 @@ header {
 
 .brand {
   display: flex;
+  flex-direction:row-reverse;
   align-items: center;
   gap: 12px;
   justify-content: center;

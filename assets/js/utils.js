@@ -132,7 +132,7 @@ function criarModalConfirmacao(dados, onConfirm, urlLogo) {
         ${dados.telefone ? `<p><strong>Telefone:</strong> ${dados.telefone}</p>` : ""}
         ${dados.foto.base64 !== "" ? `<img src="${dados.foto.base64}" class="imagem_usuario">` : ""}
         <p>---------------------------------------------------</p>
-        <p>Pode levar um tempo até a inserção de seu dados!</p>
+        <p>Pode levar um tempo até a inserção de seu dados, apoós o fechamento do Pop Up!</p>
         <p>Por favor, aguarde!</p>
     `;
 
@@ -538,24 +538,32 @@ function mostrarNotificacao(mensagem, tipo = 'sucesso', duracao = 3000) {
  * @param {HTMLImageElement} previewFoto - Elemento <img> para mostrar preview.
  * @param {HTMLElement} erroFoto - Elemento de erro para mensagens.
  */
-function previewImagem(fotoInput, previewFoto, erroFoto) {
+function previewImagem(fotoInput, erroFoto) {
     const file = fotoInput.files[0];
 
     if (file) {
+        const img = document.createElement('img');
+        const span = document.createElement("span");
+        const div = document.querySelector("#head");
+        span.id = "imagemTemp"
+        span.classList.add("imagem_usuario");
+        span.setAttribute("aria-hidden","true");
+        img.id = "user";
+        img.alt = "usuario";
+        span.appendChild(img);
+        div.appendChild(span);
         const formatosPermitidos = ['image/jpeg', 'image/jpg', 'image/png'];
         if (!formatosPermitidos.includes(file.type)) {
             erroFoto.textContent = "Apenas arquivos JPGE ,JPG ou PNG são permitidos.";
-            previewFoto.src = "./assets/img/azulAiesec.png"; // volta para padrão
             return;
         }
         erroFoto.textContent = '';
         const reader = new FileReader();
         reader.onload = (e) => {
-            previewFoto.src = e.target.result;
+            img.src = e.target.result;
         };
         reader.readAsDataURL(file);
     } else {
-        previewFoto.src = "./assets/img/azulAiesec.png"; // reseta
         erroFoto.textContent = '';
     }
 }
@@ -565,8 +573,11 @@ function previewImagem(fotoInput, previewFoto, erroFoto) {
  * Usada no reset do formulário.
  * @param {HTMLImageElement} preview - Elemento de preview da foto.
  */
-function limpar(preview, nome, sobrenome, senha, olhoFechado, olhoAberto, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha, codigo, erroCodigo) {
-    preview.src = "./assets/img/azulAiesec.png";
+function limpar(nome, sobrenome, senha, olhoFechado, olhoAberto, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha, codigo, erroCodigo) {
+    const image = document.querySelector("#imagemTemp");
+    if (image){
+        image.remove();
+    }
     nome.classList.remove('invalid', 'valid');
     codigo.classList.remove('invalid', 'valid');
     sobrenome.classList.remove('invalid', 'valid');
@@ -626,11 +637,10 @@ function dadosImagem(imagem) {
     return new Promise((resolve) => {
         const file = imagem.files[0];
         if (!file) return resolve({ base64: '', tipo: '' });
-
+        
         const reader = new FileReader();
         reader.onload = (e) => resolve({ base64: e.target.result, tipo: file.type });
         reader.onerror = () => resolve({ base64: '', tipo: '' });
-
         reader.readAsDataURL(file);
     });
 }
