@@ -132,8 +132,8 @@ function criarModalConfirmacao(dados, onConfirm, urlLogo) {
         ${dados.telefone ? `<p><strong>Telefone:</strong> ${dados.telefone}</p>` : ""}
         ${dados.foto.base64 !== "" ? `<img src="${dados.foto.base64}" class="imagem_usuario">` : ""}
         <p>---------------------------------------------------</p>
-        <p>Pode levar um tempo até a inserção de seu dados, apoós o fechamento do Pop Up!</p>
-        <p>Por favor, aguarde!</p>
+        <p>Pode levar um tempo até a inserção de seu dados, após o fechamento do Pop Up!</p>
+        <p>Por favor, aguarde e recebera suas crendenciais também!</p>
     `;
 
     // ------------------- Rodapé (Footer) ------------------- //
@@ -186,6 +186,8 @@ function criarModalConfirmacao(dados, onConfirm, urlLogo) {
         // Remove botões do rodapé
         modalFooter.innerHTML = "";
         confirmado = true;
+        // Aguarda o spinner fechar e então gera o TXT
+        esperarESpinnerFechar(dados);
     });
 
     const fecharModal = () => {
@@ -776,8 +778,6 @@ async function inserirUsuarios(url, dados) {
         const retorno = await response.json();
         if (Object.keys(retorno).length > 2) {
             esconderSpinner();
-            // Aguarda o spinner fechar e então gera o TXT
-            return await esperarESpinnerFechar(data);
         } else {
             esconderSpinner();
             return criarModalPopUp("Falha", retorno.message, "./assets/img/Logo-Aiesec.png");
