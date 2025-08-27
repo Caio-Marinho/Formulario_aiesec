@@ -186,8 +186,6 @@ function criarModalConfirmacao(dados, onConfirm, urlLogo) {
         // Remove botões do rodapé
         modalFooter.innerHTML = "";
         confirmado = true;
-        // Aguarda o spinner fechar e então gera o TXT
-        esperarESpinnerFechar(dados);
     });
 
     const fecharModal = () => {
@@ -195,6 +193,8 @@ function criarModalConfirmacao(dados, onConfirm, urlLogo) {
         // Chama a função de confirmação, se fornecida
         if (confirmado && typeof onConfirm === "function") {
             onConfirm();
+            // Aguarda o spinner fechar e então gera o TXT
+            esperarESpinnerFechar(dados);
         }
     };
 
@@ -441,7 +441,6 @@ function esconderSpinner() {
 }
 
 async function downloadCredenciais(dados, tipo = "sucesso", duracao = 2500) {
-    mostrarNotificacao(dados.emailGerado, tipo, duracao)
     await sleep(3000)
     const conteudo = `Email institucional: ${dados.emailGerado}\nSenha: ${dados.senha}`;
     const blob = new Blob([conteudo], { type: "text/plain" });
@@ -778,6 +777,7 @@ async function inserirUsuarios(url, dados) {
         const retorno = await response.json();
         if (Object.keys(retorno).length > 2) {
             esconderSpinner();
+            return mostrarNotificacao(data.emailGerado, tipo, duracao)
         } else {
             esconderSpinner();
             return criarModalPopUp("Falha", retorno.message, "./assets/img/Logo-Aiesec.png");
