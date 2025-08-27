@@ -248,7 +248,6 @@ form.addEventListener('submit', async function (event) {
       // 🔹 Só mostra spinner DEPOIS da confirmação
       mostrarSpinner();
       await inserirUsuarios(urlInserirUsuario, dados)
-      mostrarNotificacao(data.emailGerado, tipo, duracao)
       form.reset();
       limpar(nome, sobrenome, senha,olhoFechado,olhoAberto, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigoMembresia,erroCodigo);
     }, logo);
