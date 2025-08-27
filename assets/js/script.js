@@ -239,7 +239,7 @@ form.addEventListener('submit', async function (event) {
     emailGerado: await gerarEmail(nome, sobrenome, erroNome, erroSobrenome, urlBuscarUsuarios),
     emailPessoal: emailSecundario.value.trim(),
     telefone: telefone.value === ""?"":normalizarTelefone(telefone),
-    foto: previewFoto.src === "./assets/img/azulAiesec.png" ? { base64: "", tipo: "" } : await dadosImagem(fotoInput),// já pega a preview atual
+    foto: await dadosImagem(fotoInput),// já pega a preview atual
     codigo : codigoMembresia.value
   };
   // 🔹 Aguardando o email ser gerado

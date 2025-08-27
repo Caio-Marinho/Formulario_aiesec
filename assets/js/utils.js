@@ -130,7 +130,7 @@ function criarModalConfirmacao(dados, onConfirm, urlLogo) {
         <p><strong>Email institucional:</strong> ${dados.emailGerado}</p>
         ${dados.emailPessoal ? `<p><strong>Email pessoal:</strong> ${dados.emailPessoal}</p>` : ""}
         ${dados.telefone ? `<p><strong>Telefone:</strong> ${dados.telefone}</p>` : ""}
-        ${dados.foto ? `<img src="${dados.foto.base64}" class="imagem_usuario">` : ""}
+        ${dados.foto.base64 !== "" ? `<img src="${dados.foto.base64}" class="imagem_usuario">` : ""}
         <p>---------------------------------------------------</p>
         <p>Pode levar um tempo até a inserção de seu dados!</p>
         <p>Por favor, aguarde!</p>
@@ -623,17 +623,18 @@ function limparPalavras(nomeCompleto) {
  * });
  */
 function dadosImagem(imagem) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         const file = imagem.files[0];
-        if (!file) return resolve(null);
+        if (!file) return resolve({ base64: '', tipo: '' });
 
         const reader = new FileReader();
         reader.onload = (e) => resolve({ base64: e.target.result, tipo: file.type });
-        reader.onerror = reject;
+        reader.onerror = () => resolve({ base64: '', tipo: '' });
 
         reader.readAsDataURL(file);
     });
 }
+
 
 /**
  * Gera um e-mail único verificando se já existe no sistema via POST.
@@ -739,7 +740,10 @@ async function inserirUsuarios(url, dados) {
         emailGerado: dados.emailGerado,
         emailPessoal: dados.emailPessoal,
         telefone: dados.telefone,
-        foto: { base64: dados.foto.base64.split(',')[1], tipo: dados.foto.tipo },
+        foto: { 
+            base64: dados.foto.base64 ? dados.foto.base64.split(',')[1] : "" ,
+            tipo: dados.foto.tipo ? dados.foto.tipo : ""
+        },
         codigo: dados.codigo
     }
     try {
