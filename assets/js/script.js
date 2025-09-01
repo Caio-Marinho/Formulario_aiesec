@@ -247,7 +247,7 @@ form.addEventListener('submit', async function (event) {
     criarModalConfirmacao(dados, async () => {
       // 🔹 Só mostra spinner DEPOIS da confirmação
       mostrarSpinner();
-      await inserirUsuarios(urlInserirUsuario, dados)
+      inserirUsuarios(urlInserirUsuario, dados)
       form.reset();
       limpar(nome, sobrenome, senha,olhoFechado,olhoAberto, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigoMembresia,erroCodigo);
     }, logo);
