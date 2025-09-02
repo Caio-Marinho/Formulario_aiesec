@@ -134,9 +134,9 @@ sobrenome.addEventListener('input', () => validarTexto(sobrenome, erroSobrenome,
 /**
  * Valida a senha conforme o usuário digita.
  */
-senha.addEventListener('input', () => validarSenha(senha, erroSenha));
+senha.addEventListener('input', async () => await validarSenha(senha, erroSenha));
 
-codigoMembresia.addEventListener('input',() => validarCodigoMembresia(codigoMembresia,erroCodigo));
+codigoMembresia.addEventListener('input',async () => await validarCodigoMembresia(codigoMembresia,erroCodigo));
 
 /**
  * Alterna a visibilidade da senha (mostrar/ocultar) ao clicar nos ícones.
@@ -211,27 +211,23 @@ form.addEventListener('submit', async function (event) {
   // 🔹 Só mostra spinner DEPOIS da confirmação
   mostrarSpinner();
 
-  //Validação dos campos obrigatórios
-  const nomeValido = await validarTexto(nome, erroNome, 'nome');
-  const sobrenomeValido = await validarTexto(sobrenome, erroSobrenome, 'sobrenome');
-  const senhaValida = validarSenha(senha, erroSenha);
-  const codigoValido = await validarCodigoMembresia(codigoMembresia,erroCodigo);
-  const emailSecValido = validarEmailSecundario(emailSecundario.value.trim());
-  const telefoneValido = await validarTelefone(telefone,erroTelefone);
-  const nomeOK = nomeValido ? "":"- Nome\n";
-  const sobrenomeOK = sobrenomeValido ? "":"- Sobrenome\n"; 
-  const senhaOK = senhaValida.codicao ? "" : `- senha(${senhaValida.mensagem})\n`;
-  const codigoOK = codigoValido ? "": "- Codigo Membresia\n";
-  const emailSecOK = emailSecValido ? "": "- Email Pessoal\n";
-  const telefoneOK = telefoneValido ? "": "- Telefone"
-  
-  if (!nomeValido || !sobrenomeValido || !senhaValida || !codigoValido || !emailSecValido || !telefoneValido) {
-    esconderSpinner();
-    criarModalPopUp("Atenção", `Campo Obrigatório não preenchidos ou campo incorreto incorreto:\n${nomeOK}${sobrenomeOK}${senhaOK}${codigoOK}${emailSecOK}${telefoneOK}`, logo)
-    return;
-  }
+const valido = await validarCampos({
+  nome,
+  sobrenome,
+  senha,
+  codigoMembresia,
+  emailSecundario,
+  telefone,
+  erroNome,
+  erroSobrenome,
+  erroSenha,
+  erroCodigo,
+  erroTelefone,
+  logo
+});
 
-  const dados = {
+if (valido){
+const dados = {
     nome: formatarNome(nome.value),
     sobrenome: formatarNome(sobrenome.value),
     senha: senha.value,
@@ -247,10 +243,12 @@ form.addEventListener('submit', async function (event) {
     criarModalConfirmacao(dados, async () => {
       // 🔹 Só mostra spinner DEPOIS da confirmação
       mostrarSpinner();
-      inserirUsuarios(urlInserirUsuario, dados)
+      await inserirUsuarios(urlInserirUsuario, dados)
       form.reset();
       limpar(nome, sobrenome, senha,olhoFechado,olhoAberto, emailSecundario, telefone, erroNome, erroSobrenome, erroTelefone, erroSenha,codigoMembresia,erroCodigo);
     }, logo);
   }
+}
+  
 });
 

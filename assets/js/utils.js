@@ -275,6 +275,52 @@ async function validarTexto(input, erroElemento, tipo) {
     }
 }
 
+async function validarCampos({
+  nome,
+  sobrenome,
+  senha,
+  codigoMembresia,
+  emailSecundario,
+  telefone,
+  erroNome,
+  erroSobrenome,
+  erroSenha,
+  erroCodigo,
+  erroTelefone,
+  logo
+}) {
+  // Validações
+  const nomeValido = await validarTexto(nome, erroNome, 'nome');
+  const sobrenomeValido = await validarTexto(sobrenome, erroSobrenome, 'sobrenome');
+  const senhaValida = await validarSenha(senha, erroSenha); // <-- senha é input
+  const codigoValido = await validarCodigoMembresia(codigoMembresia, erroCodigo);
+  const emailSecValido = await validarEmailSecundario(emailSecundario.value.trim());
+  const telefoneValido = await validarTelefone(telefone, erroTelefone);
+
+  // Mensagens
+  const nomeOK = nomeValido ? "" : "- Nome\n";
+  const sobrenomeOK = sobrenomeValido ? "" : "- Sobrenome\n"; 
+  const senhaOK = senhaValida.codicao ? "" : `- Senha (${senhaValida.mensagem})\n`;
+  const codigoOK = codigoValido ? "" : "- Código de Membresia\n";
+  const emailSecOK = emailSecValido ? "" : "- Email Pessoal\n";
+  const telefoneOK = telefoneValido ? "" : "- Telefone\n";
+
+  // Verifica se todos os campos estão válidos
+  if (!nomeValido || !sobrenomeValido || !senhaValida.codicao || !codigoValido || !emailSecValido || !telefoneValido) {
+    esconderSpinner();
+    criarModalPopUp(
+      "Atenção",
+      `Campos obrigatórios não preenchidos ou incorretos:\n${nomeOK}${sobrenomeOK}${senhaOK}${codigoOK}${emailSecOK}${telefoneOK}`,
+      logo
+    );
+    return false;
+  }
+
+  return true;
+}
+
+
+
 /**
  * Valida a senha de acordo com critérios de segurança.
  * @param {HTMLInputElement} input - Campo de senha.
@@ -282,7 +328,7 @@ async function validarTexto(input, erroElemento, tipo) {
  * @returns {boolean} True se todos os critérios forem atendidos.
  * @nota Segurança: Não armazene senhas em texto puro; apenas valida visualmente.
  */
-function validarSenha(input, erros) {
+async function validarSenha(input, erros) {
     const valor = input.value;
     const minimo = valor.length >= 8 && !/\s/.test(valor);
     const minusculo = /[a-z]/.test(valor);
@@ -302,7 +348,7 @@ function validarSenha(input, erros) {
     const allOk = minimo && minusculo && maiusculo && caracterEspecial;
     const resultado = {
         codicao: allOk,
-        mensagem: valor === "" ? "" : "Uma ou mais das condições da senha não foi atendida"
+        mensagem: valor === "" ? "Uma ou mais das condições da senha não foi atendida": ""
     }
     input.classList.toggle('valid', allOk);
     input.classList.toggle('invalid', !allOk);
@@ -329,7 +375,7 @@ function toggleSenha(input, mostrar, olhoAberto, olhoFechado) {
  * @param {string} email - E-mail informado.
  * @returns {boolean} True se válido, false caso contrário.
  */
-function validarEmailSecundario(email) {
+async function validarEmailSecundario(email) {
     const dominiosPermitidos = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com'];
     const regexEmail = /^[\w.-]+@([\w-]+\.)+[\w-]{2,4}$/;
     if (email !== "") {
@@ -697,7 +743,6 @@ async function gerarEmail(nome, sobrenome, erroNome, erroSobrenome, url) {
         left: 0,
         behavior: 'smooth' // remove se quiser instantâneo
     });
-    mostrarNotificacao(email, "erro")
     return criarModalPopUp("Erro", "Usuario com este email já está cadastrado", "./assets/img/Logo-Aiesec.png")
 
 }
@@ -752,8 +797,8 @@ async function inserirUsuarios(url, dados) {
         emailPessoal: dados.emailPessoal,
         telefone: dados.telefone,
         foto: { 
-            base64: dados.foto.base64 ? dados.foto.base64.split(',')[1] : "" ,
-            tipo: dados.foto.tipo ? dados.foto.tipo : ""
+            base64: dados.foto.base64 !== "" ? dados.foto.base64.split(',')[1] : "" ,
+            tipo: dados.foto.tipo !== "" ? dados.foto.tipo : ""
         },
         codigo: dados.codigo
     }
