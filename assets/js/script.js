@@ -29,7 +29,7 @@ const olhoFechado = document.querySelector("#esconderSenha");
 const codigoMembresia = document.querySelector("#codigo");
 
 //Url Base
-const urlBase = "https://kaigabriel12.pythonanywhere.com";
+const urlBase = "https://BaziAiesec.pythonanywhere.com";
 //Url com rotas
 const urlBuscarUsuarios = `${urlBase}/buscarUsuario`;
 const urlInserirUsuario = `${urlBase}/inserirUsuario`;

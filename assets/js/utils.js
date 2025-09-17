@@ -770,7 +770,6 @@ async function buscarUsuario(url, email) {
             },
             body: JSON.stringify(dados) // Convertendo o objeto 'dados' para uma string JSON
         });
-
         // Verificando se a resposta foi bem-sucedida
         if (!response.ok) {
             // Se a resposta não for 2xx, lança um erro
